@@ -8,7 +8,7 @@ int main() {
 	setlocale(LC_ALL, "");
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
-	/*int k = 0;
+	int k = 0;
 	char op = '+';
 	linked_list<int> a;
 	int i = 0;
@@ -40,19 +40,6 @@ int main() {
 
 		i++;
 
-	}*/
-
-	linked_list<int> a;
-	for (int i = 0; i < 5; i++) {
-		int b;
-		cin >> b;
-		a.push_back(b);
 	}
-	a.print();
-	int c;
-	cin >> c;
-	a.pop(c);
-	cout << a[10];
 	
-
 }

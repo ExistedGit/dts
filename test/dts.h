@@ -7,6 +7,8 @@
 using namespace std;
 
 namespace dts {
+	
+
 	// Связанный список
 	template <typename T>
 	class linked_list {
@@ -93,6 +95,7 @@ namespace dts {
 			if (linkedElem->next == nullptr) {
 				T value = linkedElem->value;
 				linkedElem = nullptr;
+				_size--;
 				return value;
 			}
 			else if (linkedElem->next->next == nullptr) {
@@ -139,6 +142,7 @@ namespace dts {
 					
 					_first = _first->next;
 					delete tmp;
+					_size--;
 					return value;
 				}
 				linkedElem = _first;
@@ -158,10 +162,20 @@ namespace dts {
 			}
 		}
 
+		
+
 	public:
 		linked_list() {
 			_first = nullptr;
 			_size = 0;
+		}
+		~linked_list() {
+			clear();
+		}
+		
+		linked_list* clear() {
+			while(_size != 0) pop_front();
+			return this;
 		}
 
 		// Процедурные оболочки рекурсивных функций
@@ -170,6 +184,14 @@ namespace dts {
 			return this;
 		}
 
+		linked_list* push_front(const T elem) {
+			LinkedElement* oldFirst = _first;
+			_first = new LinkedElement();
+			_first->next = oldFirst;
+			_first->value = elem;
+			_size++;
+			return this;
+		}
 		T pop_front() {
 			LinkedElement* tmp = _first;
 			T value = tmp->value;
@@ -216,14 +238,22 @@ namespace dts {
 			
 		}
 
-		linked_list* bubbleSort() {
-			
-			for (int i = 0; i < _size; i++) {
-				bubbleSortCycleR();
-			}
-			return this;
+		
+
+		int size() {
+			return _size;
 		}
 	};
+
+	template <typename T>
+	void bubbleSort(linked_list<T>& a) { // Работает только с численными списками
+		string tID = typeid(a).name();
+		if (tID == "int" || tID == "float" || tID == "double") {
+			for (int i = 0; i < a.size(); i++) {
+				a.bubbleSortCycleR();
+			}
+		}
+	}
 
 	template <typename T>
 	class Stack {
@@ -235,24 +265,52 @@ namespace dts {
 			stack.push_back(elem);
 			return this;
 		}
-		T& pop() {
-			if (stack._size == 0) {
+		T pop() {
+			if (stack.size() == 0) {
 				throw "Стек пуст!";
 			}
 			return stack.pop_back();
 		}
-		T& peek() {
-			if (stack._size == 0) {
+		T peek() {
+			if (stack.size() == 0) {
 				throw "Стек пуст!";
 			}
 			return stack.last();
 		}
-		
 		int count() {
-			return stack._size;
+			return stack.size();
 		}
 
 	};
+
+	template <typename T>
+	class Queue {
+	private:
+		linked_list<T> queue;
+	public:
+
+		Queue* enqueue(const T& elem) {
+			queue.push_back(elem);
+			return this;
+		}
+		T dequeue() {
+			if (queue.size()  == 0) {
+				throw "Стек пуст!";
+			}
+			return queue.pop_front();
+		}
+		T peek() {
+			if (queue.size() == 0) {
+				throw "Стек пуст!";
+			}
+			return queue.first();
+		}
+		int count() {
+			return queue.size();
+		}
+
+	};
+
 
 	// Вектор(динамический массив)
 	template <typename Type>
