@@ -74,7 +74,9 @@ namespace dts {
 		}
 
 		T& getElemR(int index, int current = 0, LinkedElement* linkedElem = nullptr) { // Рекурсивная начинка нахождения n-ного объекта списка
-			if (index < 0 || index >= _size) return _first->value;
+			if (index < 0 || index >= _size) {
+				throw "Неверный индекс связанного списка";
+			};
 
 			if (linkedElem == nullptr) linkedElem = _first;
 
@@ -200,10 +202,18 @@ namespace dts {
 			return (*this)[_size - 1];
 		}
 
-
+		T& at(int index) {
+			try {
+				return getElemR(index);
+			}
+			catch (const char* msg) {
+				cerr << msg << endl;
+			}
+		}
 
 		T& operator[](int index) {
-			return getElemR(index);
+			return at(index);
+			
 		}
 
 		linked_list* bubbleSort() {
@@ -213,6 +223,35 @@ namespace dts {
 			}
 			return this;
 		}
+	};
+
+	template <typename T>
+	class Stack {
+	private:
+		linked_list<T> stack;
+	public:
+
+		Stack* push(const T& elem) {
+			stack.push_back(elem);
+			return this;
+		}
+		T& pop() {
+			if (stack._size == 0) {
+				throw "Стек пуст!";
+			}
+			return stack.pop_back();
+		}
+		T& peek() {
+			if (stack._size == 0) {
+				throw "Стек пуст!";
+			}
+			return stack.last();
+		}
+		
+		int count() {
+			return stack._size;
+		}
+
 	};
 
 	// Вектор(динамический массив)

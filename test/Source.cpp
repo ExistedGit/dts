@@ -1,9 +1,13 @@
 
 #include "dts.h"
+#include <Windows.h>
 using namespace std;
 using namespace dts;
 
 int main() {
+	setlocale(LC_ALL, "");
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
 	/*int k = 0;
 	char op = '+';
 	linked_list<int> a;
@@ -48,7 +52,7 @@ int main() {
 	int c;
 	cin >> c;
 	a.pop(c);
-	a.print();
+	cout << a[10];
 	
 
 }
