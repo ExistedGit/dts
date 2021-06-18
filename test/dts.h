@@ -1,6 +1,8 @@
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS
 
+#define RECURSIVE_LINKED_FUNCTIONS
+
 #include <iostream>
 #include <mutex> // для инициализации вектора списком
 #include <map> // для ассоциативного массива символов в toString()
@@ -28,10 +30,13 @@ namespace dts {
 			}
 		};
 
+		
+
 		LinkedElement* _first;
 		int _size;
 
 		void recursivePrint(LinkedElement* l = nullptr) { // Рекурсивная начинка вывода списка
+			if (_first == nullptr) return;
 			if (l == nullptr) {
 				cout << _first->value << " ";
 				l = _first;
@@ -70,11 +75,20 @@ namespace dts {
 			}
 
 			linkedElem = linkedElem->next;
-
-
 			return addElemR(elem, linkedElem);
 		}
-
+		void addElemI(const T elem) { // Итеративная начинка добавления объекта в список
+			if (_first == nullptr) {
+				_first = new LinkedElement();
+				_first->value = elem;
+			}
+			LinkedElement* linkedElem = _first;
+			while (linkedElem->next != nullptr) {
+				linkedElem = linkedElem->next;
+			}
+			linkedElem->next = new LinkedElement();
+			linkedElem->next->value = elem;
+		}
 		T& getElemR(int index, int current = 0, LinkedElement* linkedElem = nullptr) { // Рекурсивная начинка нахождения n-ного объекта списка
 			if (index < 0 || index >= _size) {
 				throw "Неверный индекс связанного списка";
@@ -89,7 +103,13 @@ namespace dts {
 			}
 			else return linkedElem->value;
 		}
-
+		T& getElemI(int index) { // Итеративная начинка нахождения n-ного объекта списка
+			LinkedElement* linkedElem = _first;
+			for (int current = 0; current != index; current++) {
+				linkedElem = linkedElem->next;
+			}
+			return linkedElem->value;
+		}
 		T& pop_backR(LinkedElement* linkedElem = nullptr) { // Рекурсивная начинка удаления последнего объекта списка
 			if (linkedElem == nullptr) linkedElem = _first;
 			if (linkedElem->next == nullptr) {
@@ -110,7 +130,16 @@ namespace dts {
 				return pop_backR(linkedElem);
 			}
 		}
-
+		T& pop_backI() { // Итеративная начинка удаления последнего объекта списка
+			LinkedElement* linkedElem = _first;
+			while (linkedElem->next->next != nullptr) {
+				linkedElem = linkedElem->next;
+			}
+			T value = linkedElem->next->value;
+			delete linkedElem->next;
+			linkedElem->next = nullptr;
+			return value;
+		}
 		void bubbleSortCycleR(LinkedElement* linkedElem = nullptr) { // Метод, проводящий один цикл пузырьковой сортировки(повторяется нужное количество раз уже в bubbleSort()
 			if (linkedElem == nullptr) linkedElem = _first; // первый рассматриваемый элемент будет первым в списке
 
@@ -132,9 +161,17 @@ namespace dts {
 
 			return bubbleSortCycleR(linkedElem); // Повторяем операцию до конца списка
 		}
-
+		void bubbleSortI() { 
+			LinkedElement linkedElem = _first;
+			for (int i = 0; i < _size; i++) {
+				if (linkedElem->value > linkedElem->next->value) {
+					swap(linkedElem->value, linkedElem->next->value);
+					
+				}
+				linkedElem = linkedElem->next;
+			}
+		}
 		T popR(int index, LinkedElement* linkedElem = nullptr, int current = 0) {
-			
 			if (linkedElem == nullptr) {
 				if (index == current) {
 					T value = _first->value;
@@ -163,11 +200,25 @@ namespace dts {
 		}
 
 		
-
+		T popR(int index) {
+			LinkedElement* linkedElem = _first;
+			for (int curr = 0; curr + 1 != index; curr++) {
+				linkedElem = linkedElem->next;
+			}
+			T value = linkedElem->next->value;
+			delete linkedElem->next;
+			linkedElem->next = nullptr;
+			return value;
+		}
 	public:
 		linked_list() {
 			_first = nullptr;
 			_size = 0;
+		}
+		linked_list(const std::initializer_list<T> il) {
+			for (int i = 0; i < il.size(); i++) {
+				push_back(il[i]);
+			}
 		}
 		~linked_list() {
 			clear();
@@ -250,7 +301,15 @@ namespace dts {
 		}
 		template<typename T>
 		friend void bubbleSort(linked_list<T>& a);
+
+		template<typename type>
+		friend ostream& operator<<(ostream& os, linked_list<type>& a);
 	};
+	template<typename type>
+	ostream& operator<<(ostream& os, linked_list<type>& a) {
+		a.print();
+		return os;
+	}
 
 	template <typename T>
 	void bubbleSort(linked_list<T>& a) { // Работает только с численными списками
@@ -468,7 +527,7 @@ namespace dts {
 			}
 			else _first = nullptr;
 
-			tmp->next->prev = nullptr;
+			_first->prev = nullptr;
 			delete tmp;
 			_size--;
 			return value;
