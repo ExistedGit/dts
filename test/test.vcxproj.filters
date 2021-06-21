@@ -23,5 +23,8 @@
     <ClInclude Include="dts.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="htam.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

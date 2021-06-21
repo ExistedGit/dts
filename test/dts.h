@@ -1,7 +1,6 @@
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS
 
-#define RECURSIVE_LINKED_FUNCTIONS
 
 #include <iostream>
 #include <mutex> // для инициализации вектора списком
@@ -12,6 +11,7 @@ namespace dts {
 	
 
 	// Связанный список
+	// Доступны два набора функций: итеративные и рекурсивные. По умолчанию используются итеративные. Чтобы включить второй набор, пропишите #define RECURSIVE_LL_FUNCTIONS
 	template <typename T>
 	class linked_list {
 	private:
@@ -23,6 +23,9 @@ namespace dts {
 
 			LinkedElement() {
 				next = nullptr;
+			}
+			LinkedElement(const T& _value) {
+				value = _value;
 			}
 
 			~LinkedElement() {
@@ -49,8 +52,15 @@ namespace dts {
 				return recursivePrint(l);
 			}
 			else {
-				cout << endl;
 				return;
+			}
+		}
+		void iterativePrint() {
+			if (_first == nullptr) return;
+			LinkedElement* l = _first;
+			for (int i = 0; i < _size; i++) {
+				cout << l->value << " ";
+				l = l->next;
 			}
 		}
 
@@ -200,7 +210,7 @@ namespace dts {
 		}
 
 		
-		T popR(int index) {
+		T popI(int index) {
 			LinkedElement* linkedElem = _first;
 			for (int curr = 0; curr + 1 != index; curr++) {
 				linkedElem = linkedElem->next;
@@ -217,9 +227,54 @@ namespace dts {
 		}
 		linked_list(const std::initializer_list<T> il) {
 			for (int i = 0; i < il.size(); i++) {
-				push_back(il[i]);
+				push_back(*(il.begin() + i));
+			}
+			_size = il.size();
+		}
+		linked_list(const linked_list& orig) {
+			if (_size != 0) clear();
+
+			if (orig._first == nullptr) {
+				_first = nullptr;
+				_size = 0;
+			}
+			else {
+
+				_first = new LinkedElement(orig._first->value);
+				LinkedElement* linkedElem = _first;
+				LinkedElement* origLinkedElem = orig._first;
+				while (origLinkedElem->next != nullptr) {
+					linkedElem->next = new LinkedElement(origLinkedElem->next->value);
+					linkedElem = linkedElem->next;
+					origLinkedElem = origLinkedElem->next;
+				}
+				_size = orig._size;
 			}
 		}
+		
+		linked_list<T>& operator=(const linked_list& orig) {
+			if (_size != 0) clear();
+			
+			if (orig._first == nullptr) {
+				_first = nullptr;
+				_size = 0;
+			}
+			else {
+			
+				_first = new LinkedElement(orig._first->value);
+
+				LinkedElement* linkedElem = _first;
+				LinkedElement* origLinkedElem = orig._first;
+				while (origLinkedElem->next != nullptr) {
+					linkedElem->next = new LinkedElement(origLinkedElem->next->value);
+					linkedElem = linkedElem->next;
+					origLinkedElem = origLinkedElem->next;
+				}
+				_size = orig._size;
+			}
+			return *this;
+		}
+
 		~linked_list() {
 			clear();
 		}
@@ -231,7 +286,11 @@ namespace dts {
 
 		// Процедурные оболочки рекурсивных функций
 		linked_list* push_back(const T elem) {
+#ifdef RECURSIVE_LL_FUNCTIONS
 			addElemR(elem);
+#else
+			addElemI(elem);
+#endif
 			return this;
 		}
 
@@ -263,16 +322,28 @@ namespace dts {
 			return value;
 		}
 		T pop_back() {			
-			
+#ifdef RECURSIVE_LL_FUNCTIONS
 			return pop_backR();
+#else 
+			return pop_backI();
+#endif
 		}
 
 		T pop(int index) {
+#ifdef RECURSIVE_LL_FUNCTIONS
 			return popR(index);
+#else
+			return popI(index);
+#endif
 		}
 
 		void print() {
+#ifdef RECURSIVE_LL_FUNCTIONS
 			recursivePrint();
+#else
+			iterativePrint();
+#endif
+			cout << endl;
 		}
 
 		T& first() {
@@ -284,7 +355,11 @@ namespace dts {
 
 		T& at(int index) {
 			try {
+#ifdef RECURSIVE_LL_FUNCTIONS
 				return getElemR(index);
+#else
+				return getElemI(index);
+#endif
 			}
 			catch (const char* msg) {
 				cerr << msg << endl;
@@ -293,7 +368,6 @@ namespace dts {
 
 		T& operator[](int index) {
 			return at(index);
-			
 		}
 
 		int size() {
@@ -307,7 +381,7 @@ namespace dts {
 	};
 	template<typename type>
 	ostream& operator<<(ostream& os, linked_list<type>& a) {
-		a.print();
+		a.recursivePrint();
 		return os;
 	}
 
@@ -475,8 +549,6 @@ namespace dts {
 			}
 		}
 
-
-
 	public:
 		double_linked_list() {
 			_first = nullptr;
@@ -536,6 +608,7 @@ namespace dts {
 			if (_size == 0) {
 				throw runtime_error("Список пуст");
 			}
+
 			return pop_backR();
 		}
 
@@ -850,25 +923,29 @@ namespace dts {
 
 		}
 		~String() {
-			delete[]cstr;
-			cstr = nullptr;
-			_size = 0;
+			if (cstr != nullptr) {
+				delete[]cstr;
+				cstr = nullptr;
+				_size = 0;
+			}
 		}
-		void operator=(const String& s) {
+		String& operator=(const String& s) {
 			if (s.cstr != nullptr) {
 				cstr = new char[strLen(s.cstr) + 1];
 				strcpy(cstr, s.cstr);
 			}
 			else cstr = nullptr;
 			_size = s._size;
+			return *this;
 		}
-		void operator=(const char* cs) {
+		String& operator=(const char* cs) {
 			if (cs != nullptr) {
 				cstr = new char[strLen(cs) + 1];
 				strcpy(cstr, cs);
 			}
 			else cstr = nullptr;
 			_size = strLen(cs);
+			return *this;
 		}
 
 		int size() {
@@ -935,15 +1012,17 @@ namespace dts {
 		friend String operator+(const String& s1, const String& s2);
 		friend String operator+(const String& s, const char* cs);
 		friend String operator+(const String& s, int n);
+
+		friend String& operator+=(const String& s1, const String& s2);
+		friend String& operator+=(const String& s, const char* cs);
+		friend String& operator+=(const String& s, int n);
+		
 		friend bool operator==(const String& s, const char* cs);
 		friend bool operator!=(const String& s, const char* cs);
 	};
 
 	// Перевод числа в строку
 	inline String toString(int n) {
-
-
-
 		String result = "";
 		if (n == 0) result.append("0");
 
@@ -967,7 +1046,17 @@ namespace dts {
 	}
 	istream& operator>>(istream& is, String& s)
 	{
-		is >> s.cstr;
+		if (s.cstr != nullptr) {
+			delete[]s.cstr;
+			s.cstr = nullptr;
+		}
+		char buff[500];
+		
+		cin.getline(buff, 500);
+		buff[499] = '\0';
+		s.cstr = new char[strlen(buff) + 1];
+		strcpy(s.cstr, buff);
+		s._size = strlen(buff);
 		return is;
 	}
 
@@ -991,7 +1080,38 @@ namespace dts {
 		result.append(toString(n));
 		return result;
 	}
+	String operator+(const String& s, char cs)
+	{
+		String result = s;
+		result.append(cs);
+		return result;
+	}
 
+	String& operator+=(String& s1, const String& s2)
+	{
+		String result = s1;
+		result.append(s2);
+		return s1 = result;
+	}
+
+	String& operator+=(String& s, const char* cs)
+	{
+		String result = s;
+		result.append(cs);
+		return s = result;
+	}
+	String& operator+=(String& s, const char cs)
+	{
+		String result = s;
+		result.append(cs);
+		return s = result;
+	}
+	String& operator+=(String& s, int n)
+	{
+		String result = s;
+		result.append(toString(n));
+		return s = result;
+	}
 
 	bool operator==(const String& s, const char* cs) {
 		return _stricmp(s.cstr, cs) == 0;
@@ -1001,5 +1121,44 @@ namespace dts {
 	}
 }
 
+
+
+
+using namespace std;
+
+template <typename T>
+int partition(T arr[], int low, int high)
+{
+	int pivot = arr[high];    // pivot 
+	int i = (low - 1);
+
+	for (int j = low; j <= high - 1; j++)
+	{
+		//if current element is smaller than pivot, increment the low element
+		//swap elements at i and j
+		if (arr[j] <= pivot)
+		{
+			i++;    // increment index of smaller element 
+			swap(arr[i], arr[j]);
+		}
+	}
+	swap(arr[i + 1], arr[high]);
+	return (i + 1);
+}
+
+
+template <typename T>
+void quickSort(T*& arr, int low, int high)
+{
+	if (low < high)
+	{
+		//partition the array 
+		T pivot = partition(arr, low, high);
+
+		//sort the sub arrays independently 
+		quickSort(arr, low, pivot - 1);
+		quickSort(arr, pivot + 1, high);
+	}
+}
 
 
