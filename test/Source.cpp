@@ -12,10 +12,12 @@ int main() {
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 	cout.setf(ios::boolalpha);
+	
+	
+	StringBuilder a = "Âëàñòü! "; // ÑòğîêîÑòğîèòåëü
+	string b = "ÀÀÀÀÀÀÀÀÁÑÎËŞŞÒÍÀß... "; // ñòğîêà
+	String c = "ÂËÀÑÒÜ!"; // Ñòğîêà
+	const char* d = " İõ..."; // const char*
 
-	String a, b;
-	cin >> a;
-	cin >> b;
-	a += '0';
-	cout << a << endl;
+	cout << a + b + c + d;
 }

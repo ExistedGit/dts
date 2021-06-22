@@ -897,8 +897,18 @@ namespace dts {
 			cstr = nullptr;
 			_size = 0;
 		}
+		String(const string& s) {
+			if (!s.empty()){
+				cstr = new char[s.size() + 1];
+				strcpy(cstr, s.c_str());
+			}
+			else cstr = nullptr;
+
+			_size = s.size();
+		}
 		explicit String(int size) {
 			cstr = new char[size];
+			cstr[0] = '\0'; // для strcat-совместимости
 			_size = size;
 		}
 		String(const String& s) {
@@ -948,7 +958,7 @@ namespace dts {
 			return *this;
 		}
 
-		int size() {
+		int size() const {
 			return _size;
 		}
 		int length() {
@@ -1019,6 +1029,8 @@ namespace dts {
 		
 		friend bool operator==(const String& s, const char* cs);
 		friend bool operator!=(const String& s, const char* cs);
+
+		friend class StringBuilder;
 	};
 
 	// Перевод числа в строку
@@ -1119,12 +1131,178 @@ namespace dts {
 	bool operator!=(const String& s, const char* cs) {
 		return _stricmp(s.cstr, cs) != 0;
 	}
+
+	class StringBuilder {
+	private:
+		char** s;
+		int _size;
+		int _capacity;
+
+		void nullArr() {
+			for (int i = 0; i < _capacity; i++) {
+				s[i] = nullptr;
+			}
+		}
+		void checkCapacity(int c) {
+			if (c > _capacity) {
+				_capacity *= 2;
+				char** newS = new char*[_capacity];
+				for (int i = 0; i < _size; i++) {
+					newS[i] = s[i];
+				}
+				delete s;
+				s = newS;
+			}
+		}
+	public:
+		
+		StringBuilder(int capacity = 8) {
+			if (capacity == 0) capacity = 8;
+			
+			_capacity = capacity;
+			s = new char*[_capacity];
+			nullArr();
+			_size = 0;
+		}
+		
+
+		StringBuilder(const char* cstr, int capacity = 8) {
+			if (capacity == 0) capacity = 8;
+
+			_capacity = capacity;
+			s = new char* [capacity];
+			nullArr();
+
+			s[0] = new char[strlen(cstr) + 1];
+			strcpy(s[0], cstr);
+			_size = 1;
+		}
+		StringBuilder(char* cstr, int capacity = 8) {
+			if (capacity == 0) capacity = 8;
+
+			_capacity = capacity;
+			s = new char* [capacity];
+			nullArr();
+
+			s[0] = new char[strlen(cstr) + 1];
+			strcpy(s[0], cstr);
+			_size = 1;
+		}
+
+		StringBuilder(String str, int capacity = 8) {
+			if (capacity == 0) capacity = 8;
+			_capacity = capacity;
+			s = new char* [capacity];
+			nullArr();
+			s[0] = new char[str.size() + 1];
+			strcpy(s[0], str.cstr);
+			_size = 1;
+		}
+		~StringBuilder() {
+			clear();
+		}
+		StringBuilder(const StringBuilder& orig) {
+			_capacity = orig._capacity;
+			s = new char* [orig._capacity];
+			_size = orig._size;
+			for (int i = 0; i < orig._size; i++) {
+				s[i] = new char[strlen(orig.s[i]) + 1];
+				strcpy(s[i], orig.s[i]);
+			}
+		}
+
+		String toString() const {
+			if (s == nullptr) return "";
+			int resultSize = 1;
+			for (int i = 0; i < _size; i++) {
+				resultSize += strlen(s[i]);
+			}
+			String result(resultSize);
+			for (int i = 0; i < _size; i++) {
+				strcat(result.cstr, s[i]);
+			}
+			return result;
+		}
+		
+
+		void setCapacity(unsigned int capacity) {
+			if (capacity < _size) return;
+
+			_capacity = capacity;
+			char** newS = new char* [_capacity];
+
+			for (int i = 0; i < _capacity; i++) {
+				newS[i] = nullptr;
+			}
+
+			for (int i = 0; i < _size; i++) {
+				newS[i] = s[i];
+			}
+			delete s;
+			s = newS;
+		}
+		
+		int getCapacity() {
+			return _capacity;
+		}
+
+		void append(const String& str, bool endline = false) {
+			checkCapacity(_size+1);
+			s[_size] = new char[str.size() + 1 + endline];
+			strcpy(s[_size], str.cstr);
+			//cout << s[_size];
+			if (endline) {
+				s[_size][str.size()] = '\n';
+				s[_size][str.size() + 1] = '\0';
+			};
+			_size++;
+		}
+		void appendLine(const String& str) {
+			append(str, true);
+		}
+
+		void clear() {
+			for (int i = 0; i < _size; i++) {
+				delete s[i];
+			}
+			delete s;
+			s = nullptr;
+			_size = 0;
+			_capacity = 0;
+		}
+		StringBuilder& operator=(const StringBuilder& orig) {
+			_capacity = orig._capacity;
+			s = new char* [orig._capacity];
+			_size = orig._size;
+			for (int i = 0; i < orig._size; i++) {
+				s[i] = new char[strlen(orig.s[i]) + 1];
+				strcpy(s[i], orig.s[i]);
+			}
+		}
+
+		StringBuilder& operator+=(const String& str) {
+			append(str);
+			return *this;
+		}
+		
+		StringBuilder operator+(const String& str) {
+			StringBuilder result = *this;
+			result.append(str);
+			return result;
+		}
+	};
+
+	ostream& operator<<(ostream& os, const StringBuilder& str) {
+		os << str.toString();
+		return os;
+	}
+
+
 }
 
 
 
 
-using namespace std;
 
 template <typename T>
 int partition(T arr[], int low, int high)
@@ -1160,5 +1338,3 @@ void quickSort(T*& arr, int low, int high)
 		quickSort(arr, pivot + 1, high);
 	}
 }
-
-
