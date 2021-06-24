@@ -1,17 +1,17 @@
-#pragma once
+п»ї#pragma once
 #define _CRT_SECURE_NO_WARNINGS
 
 
 #include <iostream>
-#include <mutex> // для инициализации вектора списком
-#include <map> // для ассоциативного массива символов в toString()
+#include <mutex> // РґР»СЏ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё РІРµРєС‚РѕСЂР° СЃРїРёСЃРєРѕРј
+#include <map> // РґР»СЏ Р°СЃСЃРѕС†РёР°С‚РёРІРЅРѕРіРѕ РјР°СЃСЃРёРІР° СЃРёРјРІРѕР»РѕРІ РІ toString()
 using namespace std;
 
 namespace dts {
 	
 
-	// Связанный список
-	// Доступны два набора функций: итеративные и рекурсивные. По умолчанию используются итеративные. Чтобы включить второй набор, пропишите #define RECURSIVE_LL_FUNCTIONS
+	// РЎРІСЏР·Р°РЅРЅС‹Р№ СЃРїРёСЃРѕРє
+	// Р”РѕСЃС‚СѓРїРЅС‹ РґРІР° РЅР°Р±РѕСЂР° С„СѓРЅРєС†РёР№: РёС‚РµСЂР°С‚РёРІРЅС‹Рµ Рё СЂРµРєСѓСЂСЃРёРІРЅС‹Рµ. РџРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РёСЃРїРѕР»СЊР·СѓСЋС‚СЃСЏ РёС‚РµСЂР°С‚РёРІРЅС‹Рµ. Р§С‚РѕР±С‹ РІРєР»СЋС‡РёС‚СЊ РІС‚РѕСЂРѕР№ РЅР°Р±РѕСЂ, РїСЂРѕРїРёС€РёС‚Рµ #define RECURSIVE_LL_FUNCTIONS
 	template <typename T>
 	class linked_list {
 	private:
@@ -38,7 +38,7 @@ namespace dts {
 		LinkedElement* _first;
 		int _size;
 
-		void recursivePrint(LinkedElement* l = nullptr) { // Рекурсивная начинка вывода списка
+		void recursivePrint(LinkedElement* l = nullptr) { // Р РµРєСѓСЂСЃРёРІРЅР°СЏ РЅР°С‡РёРЅРєР° РІС‹РІРѕРґР° СЃРїРёСЃРєР°
 			if (_first == nullptr) return;
 			if (l == nullptr) {
 				cout << _first->value << " ";
@@ -64,7 +64,7 @@ namespace dts {
 			}
 		}
 
-		void addElemR(const T elem, LinkedElement* linkedElem = nullptr) { // Рекурсивная начинка добавления объекта в список
+		void addElemR(const T elem, LinkedElement* linkedElem = nullptr) { // Р РµРєСѓСЂСЃРёРІРЅР°СЏ РЅР°С‡РёРЅРєР° РґРѕР±Р°РІР»РµРЅРёСЏ РѕР±СЉРµРєС‚Р° РІ СЃРїРёСЃРѕРє
 			if (_first == nullptr) {
 				_first = new LinkedElement();
 				_first->value = elem;
@@ -87,7 +87,7 @@ namespace dts {
 			linkedElem = linkedElem->next;
 			return addElemR(elem, linkedElem);
 		}
-		void addElemI(const T elem) { // Итеративная начинка добавления объекта в список
+		void addElemI(const T elem) { // РС‚РµСЂР°С‚РёРІРЅР°СЏ РЅР°С‡РёРЅРєР° РґРѕР±Р°РІР»РµРЅРёСЏ РѕР±СЉРµРєС‚Р° РІ СЃРїРёСЃРѕРє
 			if (_first == nullptr) {
 				_first = new LinkedElement();
 				_first->value = elem;
@@ -100,9 +100,9 @@ namespace dts {
 			linkedElem->next = new LinkedElement();
 			linkedElem->next->value = elem;
 		}
-		T& getElemR(int index, int current = 0, LinkedElement* linkedElem = nullptr) { // Рекурсивная начинка нахождения n-ного объекта списка
+		T& getElemR(int index, int current = 0, LinkedElement* linkedElem = nullptr) { // Р РµРєСѓСЂСЃРёРІРЅР°СЏ РЅР°С‡РёРЅРєР° РЅР°С…РѕР¶РґРµРЅРёСЏ n-РЅРѕРіРѕ РѕР±СЉРµРєС‚Р° СЃРїРёСЃРєР°
 			if (index < 0 || index >= _size) {
-				throw out_of_range("Неверный индекс связанного списка");
+				throw out_of_range("РќРµРІРµСЂРЅС‹Р№ РёРЅРґРµРєСЃ СЃРІСЏР·Р°РЅРЅРѕРіРѕ СЃРїРёСЃРєР°");
 			};
 
 			if (linkedElem == nullptr) linkedElem = _first;
@@ -114,8 +114,8 @@ namespace dts {
 			}
 			else return linkedElem->value;
 		}
-		T& getElemI(int index) { // Итеративная начинка нахождения n-ного объекта списка
-			if (index < 0 || index >= _size) throw out_of_range("Неверный индекс связанного списка");
+		T& getElemI(int index) { // РС‚РµСЂР°С‚РёРІРЅР°СЏ РЅР°С‡РёРЅРєР° РЅР°С…РѕР¶РґРµРЅРёСЏ n-РЅРѕРіРѕ РѕР±СЉРµРєС‚Р° СЃРїРёСЃРєР°
+			if (index < 0 || index >= _size) throw out_of_range("РќРµРІРµСЂРЅС‹Р№ РёРЅРґРµРєСЃ СЃРІСЏР·Р°РЅРЅРѕРіРѕ СЃРїРёСЃРєР°");
 
 			LinkedElement* linkedElem = _first;
 			for (int current = 0; current != index; current++) {
@@ -123,7 +123,7 @@ namespace dts {
 			}
 			return linkedElem->value;
 		}
-		T& pop_backR(LinkedElement* linkedElem = nullptr) { // Рекурсивная начинка удаления последнего объекта списка
+		T& pop_backR(LinkedElement* linkedElem = nullptr) { // Р РµРєСѓСЂСЃРёРІРЅР°СЏ РЅР°С‡РёРЅРєР° СѓРґР°Р»РµРЅРёСЏ РїРѕСЃР»РµРґРЅРµРіРѕ РѕР±СЉРµРєС‚Р° СЃРїРёСЃРєР°
 			if (linkedElem == nullptr) linkedElem = _first;
 			if (linkedElem->next == nullptr) {
 				T value = linkedElem->value;
@@ -143,7 +143,7 @@ namespace dts {
 				return pop_backR(linkedElem);
 			}
 		}
-		T& pop_backI() { // Итеративная начинка удаления последнего объекта списка
+		T& pop_backI() { // РС‚РµСЂР°С‚РёРІРЅР°СЏ РЅР°С‡РёРЅРєР° СѓРґР°Р»РµРЅРёСЏ РїРѕСЃР»РµРґРЅРµРіРѕ РѕР±СЉРµРєС‚Р° СЃРїРёСЃРєР°
 			LinkedElement* linkedElem = _first;
 			while (linkedElem->next->next != nullptr) {
 				linkedElem = linkedElem->next;
@@ -153,26 +153,26 @@ namespace dts {
 			linkedElem->next = nullptr;
 			return value;
 		}
-		void bubbleSortCycleR(LinkedElement* linkedElem = nullptr) { // Метод, проводящий один цикл пузырьковой сортировки(повторяется нужное количество раз уже в bubbleSort()
-			if (linkedElem == nullptr) linkedElem = _first; // первый рассматриваемый элемент будет первым в списке
+		void bubbleSortCycleR(LinkedElement* linkedElem = nullptr) { // РњРµС‚РѕРґ, РїСЂРѕРІРѕРґСЏС‰РёР№ РѕРґРёРЅ С†РёРєР» РїСѓР·С‹СЂСЊРєРѕРІРѕР№ СЃРѕСЂС‚РёСЂРѕРІРєРё(РїРѕРІС‚РѕСЂСЏРµС‚СЃСЏ РЅСѓР¶РЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЂР°Р· СѓР¶Рµ РІ bubbleSort()
+			if (linkedElem == nullptr) linkedElem = _first; // РїРµСЂРІС‹Р№ СЂР°СЃСЃРјР°С‚СЂРёРІР°РµРјС‹Р№ СЌР»РµРјРµРЅС‚ Р±СѓРґРµС‚ РїРµСЂРІС‹Рј РІ СЃРїРёСЃРєРµ
 
-			if (linkedElem->next != nullptr) { // Если есть следующий элемент, то...
-				if (linkedElem->value >= linkedElem->next->value) // ...если его значение больше значения текущего элемента,..
+			if (linkedElem->next != nullptr) { // Р•СЃР»Рё РµСЃС‚СЊ СЃР»РµРґСѓСЋС‰РёР№ СЌР»РµРјРµРЅС‚, С‚Рѕ...
+				if (linkedElem->value >= linkedElem->next->value) // ...РµСЃР»Рё РµРіРѕ Р·РЅР°С‡РµРЅРёРµ Р±РѕР»СЊС€Рµ Р·РЅР°С‡РµРЅРёСЏ С‚РµРєСѓС‰РµРіРѕ СЌР»РµРјРµРЅС‚Р°,..
 				{
-					swap(linkedElem->value, linkedElem->next->value); // ...меняем их местам, после чего...
-					linkedElem = linkedElem->next; // переставляем текущий элемент на следующий в списке,..
+					swap(linkedElem->value, linkedElem->next->value); // ...РјРµРЅСЏРµРј РёС… РјРµСЃС‚Р°Рј, РїРѕСЃР»Рµ С‡РµРіРѕ...
+					linkedElem = linkedElem->next; // РїРµСЂРµСЃС‚Р°РІР»СЏРµРј С‚РµРєСѓС‰РёР№ СЌР»РµРјРµРЅС‚ РЅР° СЃР»РµРґСѓСЋС‰РёР№ РІ СЃРїРёСЃРєРµ,..
 
 				}
-				// Если элемент не больше следующего, переходим далее
-				else { //.., иначе...
-					linkedElem = linkedElem->next; // ...тоже переставляем текущий элемент на следующий и...
-					return bubbleSortCycleR(linkedElem); // ...повторяем операцию.
+				// Р•СЃР»Рё СЌР»РµРјРµРЅС‚ РЅРµ Р±РѕР»СЊС€Рµ СЃР»РµРґСѓСЋС‰РµРіРѕ, РїРµСЂРµС…РѕРґРёРј РґР°Р»РµРµ
+				else { //.., РёРЅР°С‡Рµ...
+					linkedElem = linkedElem->next; // ...С‚РѕР¶Рµ РїРµСЂРµСЃС‚Р°РІР»СЏРµРј С‚РµРєСѓС‰РёР№ СЌР»РµРјРµРЅС‚ РЅР° СЃР»РµРґСѓСЋС‰РёР№ Рё...
+					return bubbleSortCycleR(linkedElem); // ...РїРѕРІС‚РѕСЂСЏРµРј РѕРїРµСЂР°С†РёСЋ.
 				}
 			}
-			// Если текущий элемент конечный в списке
-			else return; // .., иначе завершаем цикл.
+			// Р•СЃР»Рё С‚РµРєСѓС‰РёР№ СЌР»РµРјРµРЅС‚ РєРѕРЅРµС‡РЅС‹Р№ РІ СЃРїРёСЃРєРµ
+			else return; // .., РёРЅР°С‡Рµ Р·Р°РІРµСЂС€Р°РµРј С†РёРєР».
 
-			return bubbleSortCycleR(linkedElem); // Повторяем операцию до конца списка
+			return bubbleSortCycleR(linkedElem); // РџРѕРІС‚РѕСЂСЏРµРј РѕРїРµСЂР°С†РёСЋ РґРѕ РєРѕРЅС†Р° СЃРїРёСЃРєР°
 		}
 		void bubbleSortI() { 
 			LinkedElement linkedElem = _first;
@@ -223,7 +223,32 @@ namespace dts {
 			linkedElem->next = nullptr;
 			return value;
 		}
+
+		int findLeftR(LinkedElement* linkedElem, const T& elem, int currIndex = 0) {
+			if (linkedElem->value == elem) {
+				return currIndex;
+			} else {
+				return findLeftR(linkedElem->next, elem, currIndex + 1);
+			}
+		}
+		int findRightR(LinkedElement* linkedElem, const T& elem, int currIndex = 0, int lastFoundIndex = 0) {
+			if (linkedElem == nullptr || linkedElem->next == nullptr) {
+				if (lastFoundIndex == 0) return -1;
+				return lastFoundIndex;
+			}
+			if (linkedElem->value == elem) {
+				lastFoundIndex = currIndex;
+			}
+			lastFoundIndex = findRightR(linkedElem->next, elem, currIndex + 1, lastFoundIndex);
+			
+			return lastFoundIndex;
+			
+		}
 	public:
+		int find(const T& elem, bool right = false) {
+			if (!right)return findLeftR(_first, elem);
+			else return findRightR(_first, elem);
+		}
 		linked_list() {
 			_first = nullptr;
 			_size = 0;
@@ -255,6 +280,7 @@ namespace dts {
 			}
 		}
 		
+
 		linked_list<T>& operator=(const linked_list& orig) {
 			if (_size != 0) clear();
 			
@@ -287,7 +313,7 @@ namespace dts {
 			return this;
 		}
 
-		// Процедурные оболочки рекурсивных функций
+		// РџСЂРѕС†РµРґСѓСЂРЅС‹Рµ РѕР±РѕР»РѕС‡РєРё СЂРµРєСѓСЂСЃРёРІРЅС‹С… С„СѓРЅРєС†РёР№
 		linked_list* push_back(const T elem) {
 #ifdef RECURSIVE_LL_FUNCTIONS
 			addElemR(elem);
@@ -389,7 +415,7 @@ namespace dts {
 	}
 
 	template <typename T>
-	void bubbleSort(linked_list<T>& a) { // Работает только с численными списками
+	void bubbleSort(linked_list<T>& a) { // Р Р°Р±РѕС‚Р°РµС‚ С‚РѕР»СЊРєРѕ СЃ С‡РёСЃР»РµРЅРЅС‹РјРё СЃРїРёСЃРєР°РјРё
 		string tID = typeid(T).name();
 		if (tID == "int" || tID == "float" || tID == "double") {
 			for (int i = 0; i < a._size; i++) {
@@ -422,7 +448,7 @@ namespace dts {
 		dLinkedElement* _first;
 		int _size;
 
-		void recursivePrint(dLinkedElement* l = nullptr) { // Рекурсивная начинка вывода списка
+		void recursivePrint(dLinkedElement* l = nullptr) { // Р РµРєСѓСЂСЃРёРІРЅР°СЏ РЅР°С‡РёРЅРєР° РІС‹РІРѕРґР° СЃРїРёСЃРєР°
 			if (l == nullptr) {
 				cout << _first->value << " ";
 				l = _first;
@@ -440,7 +466,7 @@ namespace dts {
 			}
 		}
 
-		void addElemR(const T elem, dLinkedElement* linkedElem = nullptr) { // Рекурсивная начинка добавления объекта в список
+		void addElemR(const T elem, dLinkedElement* linkedElem = nullptr) { // Р РµРєСѓСЂСЃРёРІРЅР°СЏ РЅР°С‡РёРЅРєР° РґРѕР±Р°РІР»РµРЅРёСЏ РѕР±СЉРµРєС‚Р° РІ СЃРїРёСЃРѕРє
 			if (_first == nullptr) {
 				_first = new dLinkedElement();
 				_first->value = elem;
@@ -465,9 +491,9 @@ namespace dts {
 			return addElemR(elem, linkedElem);
 		}
 
-		T& getElemR(int index, int current = 0, dLinkedElement* linkedElem = nullptr) { // Рекурсивная начинка нахождения n-ного объекта списка
+		T& getElemR(int index, int current = 0, dLinkedElement* linkedElem = nullptr) { // Р РµРєСѓСЂСЃРёРІРЅР°СЏ РЅР°С‡РёРЅРєР° РЅР°С…РѕР¶РґРµРЅРёСЏ n-РЅРѕРіРѕ РѕР±СЉРµРєС‚Р° СЃРїРёСЃРєР°
 			if (index < 0 || index >= _size) {
-				throw invalid_argument("Неверный индекс связанного списка");
+				throw invalid_argument("РќРµРІРµСЂРЅС‹Р№ РёРЅРґРµРєСЃ СЃРІСЏР·Р°РЅРЅРѕРіРѕ СЃРїРёСЃРєР°");
 			};
 
 			if (linkedElem == nullptr) linkedElem = _first;
@@ -480,7 +506,7 @@ namespace dts {
 			else return linkedElem->value;
 		}
 
-		T& pop_backR(dLinkedElement* linkedElem = nullptr) { // Рекурсивная начинка удаления последнего объекта списка
+		T& pop_backR(dLinkedElement* linkedElem = nullptr) { // Р РµРєСѓСЂСЃРёРІРЅР°СЏ РЅР°С‡РёРЅРєР° СѓРґР°Р»РµРЅРёСЏ РїРѕСЃР»РµРґРЅРµРіРѕ РѕР±СЉРµРєС‚Р° СЃРїРёСЃРєР°
 			
 			
 			if (linkedElem == nullptr) {
@@ -501,26 +527,26 @@ namespace dts {
 			}
 		}
 
-		void bubbleSortCycleR(dLinkedElement* linkedElem = nullptr) { // Метод, проводящий один цикл пузырьковой сортировки(повторяется нужное количество раз уже в bubbleSort()
-			if (linkedElem == nullptr) linkedElem = _first; // первый рассматриваемый элемент будет первым в списке
+		void bubbleSortCycleR(dLinkedElement* linkedElem = nullptr) { // РњРµС‚РѕРґ, РїСЂРѕРІРѕРґСЏС‰РёР№ РѕРґРёРЅ С†РёРєР» РїСѓР·С‹СЂСЊРєРѕРІРѕР№ СЃРѕСЂС‚РёСЂРѕРІРєРё(РїРѕРІС‚РѕСЂСЏРµС‚СЃСЏ РЅСѓР¶РЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЂР°Р· СѓР¶Рµ РІ bubbleSort()
+			if (linkedElem == nullptr) linkedElem = _first; // РїРµСЂРІС‹Р№ СЂР°СЃСЃРјР°С‚СЂРёРІР°РµРјС‹Р№ СЌР»РµРјРµРЅС‚ Р±СѓРґРµС‚ РїРµСЂРІС‹Рј РІ СЃРїРёСЃРєРµ
 
-			if (linkedElem->next != nullptr) { // Если есть следующий элемент, то...
-				if (linkedElem->value >= linkedElem->next->value) // ...если его значение больше значения текущего элемента,..
+			if (linkedElem->next != nullptr) { // Р•СЃР»Рё РµСЃС‚СЊ СЃР»РµРґСѓСЋС‰РёР№ СЌР»РµРјРµРЅС‚, С‚Рѕ...
+				if (linkedElem->value >= linkedElem->next->value) // ...РµСЃР»Рё РµРіРѕ Р·РЅР°С‡РµРЅРёРµ Р±РѕР»СЊС€Рµ Р·РЅР°С‡РµРЅРёСЏ С‚РµРєСѓС‰РµРіРѕ СЌР»РµРјРµРЅС‚Р°,..
 				{
-					swap(linkedElem->value, linkedElem->next->value); // ...меняем их местам, после чего...
-					linkedElem = linkedElem->next; // переставляем текущий элемент на следующий в списке,..
+					swap(linkedElem->value, linkedElem->next->value); // ...РјРµРЅСЏРµРј РёС… РјРµСЃС‚Р°Рј, РїРѕСЃР»Рµ С‡РµРіРѕ...
+					linkedElem = linkedElem->next; // РїРµСЂРµСЃС‚Р°РІР»СЏРµРј С‚РµРєСѓС‰РёР№ СЌР»РµРјРµРЅС‚ РЅР° СЃР»РµРґСѓСЋС‰РёР№ РІ СЃРїРёСЃРєРµ,..
 
 				}
-				// Если элемент не больше следующего, переходим далее
-				else { //.., иначе...
-					linkedElem = linkedElem->next; // ...тоже переставляем текущий элемент на следующий и...
-					return bubbleSortCycleR(linkedElem); // ...повторяем операцию.
+				// Р•СЃР»Рё СЌР»РµРјРµРЅС‚ РЅРµ Р±РѕР»СЊС€Рµ СЃР»РµРґСѓСЋС‰РµРіРѕ, РїРµСЂРµС…РѕРґРёРј РґР°Р»РµРµ
+				else { //.., РёРЅР°С‡Рµ...
+					linkedElem = linkedElem->next; // ...С‚РѕР¶Рµ РїРµСЂРµСЃС‚Р°РІР»СЏРµРј С‚РµРєСѓС‰РёР№ СЌР»РµРјРµРЅС‚ РЅР° СЃР»РµРґСѓСЋС‰РёР№ Рё...
+					return bubbleSortCycleR(linkedElem); // ...РїРѕРІС‚РѕСЂСЏРµРј РѕРїРµСЂР°С†РёСЋ.
 				}
 			}
-			// Если текущий элемент конечный в списке
-			else return; // .., иначе завершаем цикл.
+			// Р•СЃР»Рё С‚РµРєСѓС‰РёР№ СЌР»РµРјРµРЅС‚ РєРѕРЅРµС‡РЅС‹Р№ РІ СЃРїРёСЃРєРµ
+			else return; // .., РёРЅР°С‡Рµ Р·Р°РІРµСЂС€Р°РµРј С†РёРєР».
 
-			return bubbleSortCycleR(linkedElem); // Повторяем операцию до конца списка
+			return bubbleSortCycleR(linkedElem); // РџРѕРІС‚РѕСЂСЏРµРј РѕРїРµСЂР°С†РёСЋ РґРѕ РєРѕРЅС†Р° СЃРїРёСЃРєР°
 		}
 
 		T popR(int index, dLinkedElement* linkedElem = nullptr, int current = 0) {
@@ -566,7 +592,7 @@ namespace dts {
 			return this;
 		}
 
-		// Процедурные оболочки рекурсивных функций
+		// РџСЂРѕС†РµРґСѓСЂРЅС‹Рµ РѕР±РѕР»РѕС‡РєРё СЂРµРєСѓСЂСЃРёРІРЅС‹С… С„СѓРЅРєС†РёР№
 		double_linked_list* push_back(const T elem) {
 			addElemR(elem);
 			return this;
@@ -592,7 +618,7 @@ namespace dts {
 		}
 		T pop_front() {
 			if (_size == 0) {
-				throw runtime_error("Список пуст");
+				throw runtime_error("РЎРїРёСЃРѕРє РїСѓСЃС‚");
 			}
 
 			dLinkedElement* tmp = _first;
@@ -609,7 +635,7 @@ namespace dts {
 		}
 		T pop_back() {
 			if (_size == 0) {
-				throw runtime_error("Список пуст");
+				throw runtime_error("РЎРїРёСЃРѕРє РїСѓСЃС‚");
 			}
 
 			return pop_backR();
@@ -617,7 +643,7 @@ namespace dts {
 
 		T pop(int index) {
 			if (index < 0 || index >= _size) {
-				throw out_of_range("Неверный индекс");
+				throw out_of_range("РќРµРІРµСЂРЅС‹Р№ РёРЅРґРµРєСЃ");
 			}
 			return popR(index);
 		}
@@ -628,13 +654,13 @@ namespace dts {
 
 		T& first() {
 			if (_size == 0) {
-				throw runtime_error("Список пуст");
+				throw runtime_error("РЎРїРёСЃРѕРє РїСѓСЃС‚");
 			}
 			return _first->value;
 		}
 		T& last() {
 			if (_size == 0) {
-				throw runtime_error("Список пуст");
+				throw runtime_error("РЎРїРёСЃРѕРє РїСѓСЃС‚");
 			}
 			return (*this)[_size - 1];
 		}
@@ -698,13 +724,13 @@ namespace dts {
 		}
 		T pop() {
 			if (stack.count() == 0) {
-				throw "Стек пуст!";
+				throw "РЎС‚РµРє РїСѓСЃС‚!";
 			}
 			return stack.dequeueLast();
 		}
 		T peek() {
 			if (stack.size() == 0) {
-				throw "Стек пуст!";
+				throw "РЎС‚РµРє РїСѓСЃС‚!";
 			}
 			return stack.last();
 		}
@@ -726,13 +752,13 @@ namespace dts {
 		}
 		T dequeue() {
 			if (queue.size()  == 0) {
-				throw "Стек пуст!";
+				throw "РЎС‚РµРє РїСѓСЃС‚!";
 			}
 			return queue.dequeueFirst();
 		}
 		T peek() {
 			if (queue.size() == 0) {
-				throw "Стек пуст!";
+				throw "РЎС‚РµРє РїСѓСЃС‚!";
 			}
 			return queue.first();
 		}
@@ -744,7 +770,7 @@ namespace dts {
 
 	
 
-	// Вектор(динамический массив)
+	// Р’РµРєС‚РѕСЂ(РґРёРЅР°РјРёС‡РµСЃРєРёР№ РјР°СЃСЃРёРІ)
 	template <typename Type>
 	class Vector
 	{
@@ -885,7 +911,7 @@ namespace dts {
 		return size;
 	}
 
-	// Строка
+	// РЎС‚СЂРѕРєР°
 	class String
 	{
 	private:
@@ -911,7 +937,7 @@ namespace dts {
 		}
 		explicit String(int size) {
 			cstr = new char[size];
-			cstr[0] = '\0'; // для strcat-совместимости
+			cstr[0] = '\0'; // РґР»СЏ strcat-СЃРѕРІРјРµСЃС‚РёРјРѕСЃС‚Рё
 			_size = size;
 		}
 		String(const String& s) {
@@ -1036,7 +1062,7 @@ namespace dts {
 		friend class StringBuilder;
 	};
 
-	// Перевод числа в строку
+	// РџРµСЂРµРІРѕРґ С‡РёСЃР»Р° РІ СЃС‚СЂРѕРєСѓ
 	inline String toString(int n) {
 		String result = "";
 		if (n == 0) result.append("0");
@@ -1053,7 +1079,7 @@ namespace dts {
 		return result.reverse();
 	}
 
-	// операторы для Строки
+	// РѕРїРµСЂР°С‚РѕСЂС‹ РґР»СЏ РЎС‚СЂРѕРєРё
 	ostream& operator<<(ostream& os, const String& s)
 	{
 		os << s.cstr;
