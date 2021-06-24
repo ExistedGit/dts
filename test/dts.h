@@ -506,7 +506,7 @@ namespace dts {
 			else return linkedElem->value;
 		}
 
-		T& pop_backR(dLinkedElement* linkedElem = nullptr) { // Рекурсивная начинка удаления последнего объекта списка
+		T pop_backR(dLinkedElement* linkedElem = nullptr) { // Рекурсивная начинка удаления последнего объекта списка
 			
 			
 			if (linkedElem == nullptr) {
@@ -719,7 +719,7 @@ namespace dts {
 	public:
 
 		Stack* push(const T& elem) {
-			stack.enqueueFirst(elem);
+			stack.enqueueLast(elem);
 			return this;
 		}
 		T pop() {
@@ -747,14 +747,14 @@ namespace dts {
 	public:
 
 		Queue* enqueue(const T& elem) {
-			queue.enqueueLast(elem);
+			queue.enqueueFirst(elem);
 			return this;
 		}
 		T dequeue() {
 			if (queue.size()  == 0) {
 				throw "Стек пуст!";
 			}
-			return queue.dequeueFirst();
+			return queue.dequeueLast();
 		}
 		T peek() {
 			if (queue.size() == 0) {
@@ -995,9 +995,14 @@ namespace dts {
 		}
 		String& append(const String& s) {
 			char* newCStr = new char[_size + s._size + 1];
-			strcpy(newCStr, cstr);
-			strcat(newCStr, s.cstr);
-
+			if (cstr != nullptr) strcpy(newCStr, cstr);
+			else {
+				if (s.cstr != nullptr) strcpy(newCStr, s.cstr);
+				cstr = newCStr;
+				_size = _size + s._size;
+				return *this;
+			}
+			if (s.cstr != nullptr) strcat(newCStr, s.cstr);
 			if (cstr != nullptr) {
 				delete[]cstr;
 				cstr = nullptr;
@@ -1006,22 +1011,11 @@ namespace dts {
 			_size = _size + s._size;
 			return *this;
 		}
-		String& append(const char* s) {
-			char* newCStr = new char[_size + strLen(s) + 1];
-			strcpy(newCStr, cstr);
-			strcat(newCStr, s);
-
-			if (cstr != nullptr) {
-				delete[]cstr;
-				cstr = nullptr;
-			}
-			cstr = newCStr;
-			_size = _size + strLen(s);
-			return *this;
-		}
 		String& append(char s) {
+			
+
 			char* newCStr = new char[_size + 2];
-			strcpy(newCStr, cstr);
+			if(cstr != nullptr) strcpy(newCStr, cstr);
 			newCStr[_size] = s;
 			newCStr[_size + 1] = '\0';
 			if (cstr != nullptr) {
