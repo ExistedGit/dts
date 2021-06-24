@@ -91,6 +91,7 @@ namespace dts {
 			if (_first == nullptr) {
 				_first = new LinkedElement();
 				_first->value = elem;
+				return;
 			}
 			LinkedElement* linkedElem = _first;
 			while (linkedElem->next != nullptr) {
@@ -101,7 +102,7 @@ namespace dts {
 		}
 		T& getElemR(int index, int current = 0, LinkedElement* linkedElem = nullptr) { // Рекурсивная начинка нахождения n-ного объекта списка
 			if (index < 0 || index >= _size) {
-				throw "Неверный индекс связанного списка";
+				throw out_of_range("Неверный индекс связанного списка");
 			};
 
 			if (linkedElem == nullptr) linkedElem = _first;
@@ -114,6 +115,8 @@ namespace dts {
 			else return linkedElem->value;
 		}
 		T& getElemI(int index) { // Итеративная начинка нахождения n-ного объекта списка
+			if (index < 0 || index >= _size) throw out_of_range("Неверный индекс связанного списка");
+
 			LinkedElement* linkedElem = _first;
 			for (int current = 0; current != index; current++) {
 				linkedElem = linkedElem->next;
@@ -225,7 +228,7 @@ namespace dts {
 			_first = nullptr;
 			_size = 0;
 		}
-		linked_list(const std::initializer_list<T> il) {
+		linked_list(const std::initializer_list<T> il) : linked_list() {
 			for (int i = 0; i < il.size(); i++) {
 				push_back(*(il.begin() + i));
 			}
@@ -361,8 +364,8 @@ namespace dts {
 				return getElemI(index);
 #endif
 			}
-			catch (const char* msg) {
-				cerr << msg << endl;
+			catch (out_of_range err) {
+				cerr << err.what() << endl;
 			}
 		}
 
@@ -1297,44 +1300,336 @@ namespace dts {
 		return os;
 	}
 
+	template <typename T>
+	class BinaryTree {
+	private:
+		struct Node {
+			T value;
 
-}
+			Node* left;
+			Node* right;
 
+			Node() {
+				left = nullptr;
+				right = nullptr;
+			}
+			Node(const T& elem, Node* _left = nullptr, Node* _right = nullptr) {
+				left = _left;
+				right = _right;
+				value = elem;
+			}
+		};
 
+		void addElemR(const T& elem, Node* node = nullptr) {
+			if (_root == nullptr) {
+				_root = new Node(elem);
+				return;
+			}
 
+			if (node == nullptr) node = _root;
 
+			if (elem >= node->value) {
+				if (node->right != nullptr) {
+					addElemR(elem, node->right);
+					Balance(node, elem);
+				}
+				else {
+					node->right = new Node(elem);
+					return;
+				}
+			}
+			else {
+				if (node->left != nullptr) {
+					addElemR(elem, node->left);
+					Balance(node, elem);
+				}
+				else {
+					node->left = new Node(elem);
+					return;
+				}
+			}
+		}
 
-template <typename T>
-int partition(T arr[], int low, int high)
-{
-	int pivot = arr[high];    // pivot 
-	int i = (low - 1);
+		int getHeightR(Node* node = nullptr) {
+			if (node == nullptr)
+				return 0;
+			else
+			{
+				int lDepth = getHeightR(node->left);
+				int rDepth = getHeightR(node->right);
 
-	for (int j = low; j <= high - 1; j++)
-	{
-		//if current element is smaller than pivot, increment the low element
-		//swap elements at i and j
-		if (arr[j] <= pivot)
+				if (lDepth > rDepth)
+					return(lDepth + 1);
+				else return(rDepth + 1);
+			}
+		}
+
+		void Balance(Node*& node, const T& elem) {
+			int LHeight = getHeightR(node->left);
+			int RHeight = getHeightR(node->right);
+			if (LHeight - RHeight > 1) {
+				if (elem >= node->left->value) {
+					rightRotate(node);
+				}
+				else {
+					bigRightRotate(node);
+				}
+			}
+			else if (LHeight - RHeight < -1) {
+				if (elem >= node->right->value) {
+					leftRotate(node);
+				}
+				else {
+					bigRightRotate(node);
+				}
+			}
+		}
+		void BalanceR(Node*& node, const T& elem) {
+			if (node == nullptr) return;
+
+			BalanceR(node->left);
+			BalanceR(node->right);
+
+			int LHeight = getHeightR(node->left);
+			int RHeight = getHeightR(node->right);
+			if (LHeight - RHeight > 1) {
+				if (elem >= node->left->value) {
+					rightRotate(node);
+				}
+				else {
+					bigRightRotate(node);
+				}
+			}
+			else if (LHeight - RHeight < -1) {
+				if (elem >= node->right->value) {
+					leftRotate(node);
+				}
+				else {
+					bigRightRotate(node);
+				}
+			}
+
+		}
+
+		bool findR(const T& elem, Node* node = nullptr) {
+			if (node->value == elem) return true;
+
+			if (elem >= node->value) {
+				if (node->right != nullptr) {
+					return findR(elem, node->right);
+				}
+				else return false;
+			}
+			else {
+				if (node->left != nullptr) {
+					return findR(elem, node->left);
+				}
+				else return false;
+			}
+		}
+		void inOrderPrint(Node* node) {
+			if (node == nullptr) return;
+
+			inOrderPrint(node->left);
+			cout << node->value << " ";
+			inOrderPrint(node->right);
+		}
+
+		void rightRotate(Node*& node) {
+			if (node == nullptr) return;
+			Node* nodeCopy = new Node(node->value, node->left, node->right);
+			Node* tmp = nodeCopy->left;
+			nodeCopy->left = tmp->right;
+			tmp->right = nodeCopy;
+
+			*node = *tmp;
+			delete tmp;
+		}
+
+		void leftRotate(Node*& node) {
+			if (node == nullptr) return;
+
+			// x - node
+			//  \
+			//   y
+			//    \
+			//     z
+
+			Node* nodeCopy = new Node(node->value, node->left, node->right);
+
+			Node* tmp = nodeCopy->right;
+			nodeCopy->right = tmp->left;
+			tmp->left = nodeCopy;
+			*node = *tmp;
+			delete tmp;
+		}
+		void bigRightRotate(Node*& node) {
+			rightRotate(node->right);
+
+			leftRotate(node);
+		}
+
+		void bigLeftRotate(Node*& node) {
+			leftRotate(node->left);
+			rightRotate(node);
+		}
+
+		void printR(const std::string& prefix, const Node* node, bool isLeft)
 		{
-			i++;    // increment index of smaller element 
-			swap(arr[i], arr[j]);
+			if (node != nullptr)
+			{
+				std::cout << prefix;
+
+				std::cout << (isLeft ? (char)195 : (char)192) << (char)196 << (char)196;
+
+				// print the value of the node
+				std::cout << node->value << std::endl;
+
+				// enter the next tree level - left and right branch
+				printR(prefix + (isLeft ? (char)179 : ' ') + "   ", node->left, true);
+				printR(prefix + (isLeft ? (char)179 : ' ') + "   ", node->right, false);
+			}
+		}
+
+		Node* _root;
+
+	public:
+
+
+
+
+
+
+		BinaryTree() {
+			_root = nullptr;
+		}
+		~BinaryTree() {
+			clear();
+		}
+
+		void clearR(Node*& node) {
+			if (node == nullptr) return;
+
+			if (node->left != nullptr) {
+				clearR(node->left);
+			}
+			if (node->right != nullptr) {
+				clearR(node->right);
+			}
+			delete node;
+			node = nullptr;
+		}
+		void clear() {
+			clearR(_root);
+
+
+		}
+
+		void addElem(const T& elem) {
+			addElemR(elem);
+		}
+		int getHeight() {
+			return getHeightR(_root) - 1;
+		}
+		bool removeR(Node*& node, const T& elem) {
+			if (node == nullptr) return false;
+
+			if (elem > node->value) {
+				return removeR(node->right, elem);
+			}
+			else if (elem < node->value) {
+				return removeR(node->left, elem);
+			}
+			else {
+				if (node->left == nullptr && node->right == nullptr) {
+
+					delete node;
+					node = nullptr;
+				}
+				else if (node->left != nullptr) {
+
+					Node*& largestLeftChild = node->left;
+					while (largestLeftChild->right != nullptr) {
+						largestLeftChild = largestLeftChild->right;
+					}
+					node->value = largestLeftChild->value;
+					delete largestLeftChild;
+					largestLeftChild = nullptr;
+				}
+				else if (node->right != nullptr) {
+					Node* right = node->right;
+					delete node;
+					node = right;
+				}
+
+				return true;
+			}
+
+		}
+		bool find(const T& elem) {
+			return findR(elem, _root);
+		};
+
+
+		bool remove(const T& elem) {
+			bool result = removeR(_root, elem);
+			BalanceR(_root, elem);
+			return result;
+		}
+
+		// In Order
+		void printIO() {
+			inOrderPrint(_root);
+		}
+
+
+
+		void print()
+		{
+			system("cls");
+			printR("", _root, false);
+			system("pause");
+		}
+	};
+
+	template <typename T>
+	int partition(T arr[], int low, int high)
+	{
+		int pivot = arr[high];    // pivot 
+		int i = (low - 1);
+
+		for (int j = low; j <= high - 1; j++)
+		{
+			//if current element is smaller than pivot, increment the low element
+			//swap elements at i and j
+			if (arr[j] <= pivot)
+			{
+				i++;    // increment index of smaller element 
+				swap(arr[i], arr[j]);
+			}
+		}
+		swap(arr[i + 1], arr[high]);
+		return (i + 1);
+	}
+
+
+	template <typename T>
+	void quickSort(T*& arr, int low, int high)
+	{
+		if (low < high)
+		{
+			//partition the array 
+			T pivot = partition(arr, low, high);
+
+			//sort the sub arrays independently 
+			quickSort(arr, low, pivot - 1);
+			quickSort(arr, pivot + 1, high);
 		}
 	}
-	swap(arr[i + 1], arr[high]);
-	return (i + 1);
 }
 
 
-template <typename T>
-void quickSort(T*& arr, int low, int high)
-{
-	if (low < high)
-	{
-		//partition the array 
-		T pivot = partition(arr, low, high);
 
-		//sort the sub arrays independently 
-		quickSort(arr, low, pivot - 1);
-		quickSort(arr, pivot + 1, high);
-	}
-}
+
+
+

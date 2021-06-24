@@ -14,10 +14,10 @@ int main() {
 	cout.setf(ios::boolalpha);
 	
 	
-	StringBuilder a = "Власть! "; // СтрокоСтроитель
-	string b = "ААААААААБСОЛЮЮТНАЯ... "; // строка
-	String c = "ВЛАСТЬ!"; // Строка
-	const char* d = " Эх..."; // const char*
-
-	cout << a + b + c + d;
+	linked_list<int> a = {3, 2, 1, 5, 4};
+	int index;
+	cout << a << endl;
+	cout << "Index: ";
+	cin >> index;
+	cout << "a[" << index << "] = " << a[index]<<endl;
 }
