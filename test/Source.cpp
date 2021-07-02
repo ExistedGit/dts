@@ -1,158 +1,148 @@
 
 #pragma once
 #include <Windows.h>
+#include <vector>
+#include <sstream>
 #include "dts.h"
 #include "htam.h"
 using namespace htam;
 using namespace std;
 using namespace dts;
 
-enum randomStringMode {
-	LETTERS,
-	NUMBERS,
-	MIXED
-};
+#define pause system("pause")
+#define cls system("cls");
 
-String generateRandomString(unsigned int characters = 1, bool ru = false, randomStringMode mode = MIXED) {
-	String result;
+bool checkExpressionEncasing(Stack<char>& expression, char currChar, bool encased = false) {
+	if (!expression.count()) return false;
 
-
-	std::random_device rd;
-	std::mt19937 mt(rd());
-	if (ru) {
-		uniform_int_distribution<int> letters((unsigned char)'ј', (unsigned char)'я');
-		uniform_int_distribution<int> numbers(48, 57);
+	Vector<char> encaseBegins = { '(', '{', '\'', '"', '<', '[' };
+	Vector<char> encaseEnds = { '\)', '\}', '\'', '"', '>', ']' };
+	map<char, char> encasings;
+	for (int i = 0; i < encaseBegins.size(); i++) encasings[encaseEnds[i]] = encaseBegins[i];
+	
+	char last;  
+	while (expression.count() != 0) {
+		last = expression.pop();
 		
-		uniform_int_distribution<int> ifLetters(0, 1);
-
-		for (int i = 0; i < characters; i++) {
-			switch (mode) {
-			case LETTERS:
-				result.append(letters(mt));
-				break;
-			case NUMBERS:
-				result.append(numbers(mt));
-				break;
-			case MIXED:
-				if (ifLetters(mt)) {
-					result.append(letters(mt));
-				}
-				else {
-					result.append(numbers(mt));
-				}
-				break;
-			}
-			
+		if (encaseBegins.find(last) != -1 && currChar == '-') {
+			currChar = last; // если начинаетс€ новое внешнее поле
+			continue;
 		}
+		// —отни тыс€ч точек выхода, но иначе никак
+		if (currChar == encasings[last]) { // ≈сли последний символ закрывающий
+			if (encased) return true; 
+			else currChar = '-';
+		} // если last Ч закрывающий символ не дл€ текущего символа
+		else if (!checkExpressionEncasing(expression, last, true)) return false; // если внутренний символ не закрыт, выражение априори неправильное	
 	}
-	else {
-		uniform_int_distribution<int> letters(65, 90);
-		uniform_int_distribution<int> numbers(48, 57);
-		uniform_int_distribution<int> ifLetters(0, 1);
-		for (int i = 0; i < characters; i++) {
-			switch (mode) {
-			case LETTERS:
-				result.append(letters(mt));
-				break;
-			case NUMBERS:
-				result.append(numbers(mt));
-				break;
-			case MIXED:
-				if (ifLetters(mt)) {
-					result.append(letters(mt));
-				}
-				else {
-					result.append(numbers(mt));
-				}
-				break;
-			}
-		}
-	}
-	return result;
+	return currChar == '-';
 }
 
-String generateCarNumberUA() {
-	String result;
-	vector<String> prefixes = {"AA", "AI", "AC", "BK", "AM", "BI", "BM", "AX", "BB", "AH", "AP", "BT", "AK", "CH", "BE", "BH", "AB", "BX", "CE", "AT", "AO", "BC", "BO", "AE", "BBA", "CA", ""};
-
-	std::random_device rd;
-	std::mt19937 mt(rd());
-	uniform_int_distribution<int> numbers(0, prefixes.size()-1);
-	result += prefixes[numbers(mt)];
-	result += generateRandomString(4, true, NUMBERS);
-	result += generateRandomString(2, false, LETTERS);
-	return result;
+bool checkExpression(String expString) {
+	if (expString.size() == 0) return false;
+	Stack<char> signs;
+	for (int i = expString.size()-1; i >=0; i--) {
+		switch (expString[i]) {
+			case '{': case '}': case '(': case ')': case '"': case '\'': case '<': case '>': case '[': case ']': signs.push(expString[i]); break;
+		}
+	}
+	if (signs.count() == 0) return false;
+	return checkExpressionEncasing(signs, signs.pop());
 }
-class Car {
 
+
+class Calculator {
+private:
 public:
-	String number;
-	Car() {
-		number = generateRandomString(8);
-	}
-	Car(String _number) {
-		number = _number;
-	}
-	Car(const Car& orig) {
-		number = orig.number;
-	}
-	Car& operator=(const Car& orig) {
-		number = orig.number;
-		return *this;
-	}
-};
+	static int stackifyExp(String expString) {
+		if (expString.size() == 0) return false;
 
-
-enum PlateColor {
-	Red, Green, Blue
-};
-class Plate {
-public:
-
-	PlateColor color;
-	Plate(PlateColor _color = Red) {
-		color = _color;
-	}
-	bool operator==(const Plate& right) {
+		Queue<char> signs;
 		
-		return color == right.color;
+		for (int i = 0; i < expString.size(); i++) {
+			switch (expString[i]) {
+			case '+': case '-': case '/': case '*': {
+				signs.enqueue(expString[i]); 
+				expString[i] = ' ';
+				break;
+			}
+			}
+		}
+		Queue<int> arguments;
+		int number;
+		
+		std::streambuf* orig = std::cin.rdbuf();
+		std::istringstream input(expString, 1);
+		std::cin.rdbuf(input.rdbuf());
+		while (cin >> number) {
+			arguments.enqueue(number);
+		}
+		std::cin.rdbuf(orig);
+		
+		return evalExp(signs, arguments, arguments.dequeue());
+	}
+
+	static int evalExp(Queue<char>& signs, Queue<int>& arguments, int left, bool consecutive = false) {
+		if (arguments.count() > 0 && arguments.count() > 0) {
+			int right = arguments.dequeue();
+			char sign = signs.dequeue();
+
+			if (signs.count() > 0 && arguments.count() > 0) {
+				
+				if (signs.last() == '*' || signs.last() == '/') {
+					right = evalExp(signs, arguments, right, true);
+					return evalExp(signs, arguments, performOperation(left, right, sign));
+				}
+				else {
+					left = performOperation(left, right, sign);
+					if(consecutive) return left;
+				}
+			}
+			return performOperation(left, right, sign);
+		}
+	}
+
+	static int performOperation(int left, int right, char sign) {
+		switch (sign) {
+		case '+':
+			return left + right;
+			break;
+		case '-':
+			return left - right;
+			break;
+		case '/':
+			return left  /right;
+			break;
+		case '*':
+			return left * right;
+			break;
+		}
 	}
 };
+
+
 
 int main() {
 	//setlocale(LC_ALL, "");
-	SetConsoleCP(1251);
-	SetConsoleOutputCP(1251);
+	//SetConsoleCP(1251); SetConsoleOutputCP(1251);
 	cout.setf(ios::boolalpha);
-	
-	unsigned int pileSize;
-	Stack<Plate> pile;
-	cout << "¬ведите количество тарелок: ";
-	cin >> pileSize;
-	
-	PlateColor color = pile.pop().color;
-
-	int count = 0;
-	int pairIndex = -1;
-	for (int i = 0; i < pileSize; i++) {
-		if (pile.pop() == Plate(color)) {
-			count++;
-			if (count == 2) {
-				pairIndex = i;
-			}
-		}
+	BinaryTree<int, int> bt;
+	for (int i = 1; i <= 12; i++) {
+		bt.push(i, i);
 	}
-	cout << endl;
+	bt.remove(4);
+	bt.print();
+	pause;
 
+	/*while (true) {
+		cls;
+		char buff[200];
+		cout << "¬ведите выражение: ";
+		cin.getline(buff, 200);
+		cin.ignore();
+		cout << Calculator::stackifyExp(buff) << endl;
+		system("pause");
+	}*/
 
-	//Stack<Car> parking;
-	//for (int i = 0; i < 8; i++) {
-	//	Car c = Car(generateCarNumberUA());
-	//	parking.push(c);
-	//	cout << c.number << " ";
-	//}
-	//cout << endl;
-	//for (int i = 0; i < 8; i++) {
-	//	cout << parking.pop().number << " ";
-	//}
+	
 }

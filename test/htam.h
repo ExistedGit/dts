@@ -6,6 +6,8 @@
 #include <iomanip>
 #include <random>
 
+using namespace std;
+
 // как math, только htam
 namespace htam {
 	template <typename T, typename = enable_if_t<is_arithmetic_v<T>>>
@@ -409,8 +411,116 @@ namespace htam {
 		return !(left==right);
 	}
 
-	
+	inline int randomInt(int min = 0, int max = 10) {
+		std::random_device rd;
+		std::mt19937 mt(rd());
+		uniform_int_distribution<int> d(min, max);
+		return d(mt);
+	}
+	inline float randomFloat(float min = 0, float max = 10) {
+		std::random_device rd;
+		std::mt19937 mt(rd());
+		uniform_real_distribution<float> d(min, max);
+		return d(mt);
+	}
+
+}
+
+namespace cars {
+	enum randomStringMode {
+		LETTERS,
+		NUMBERS,
+		MIXED
+	};
+
+	inline dts::String generateRandomString(unsigned int characters = 1, bool ru = false, randomStringMode mode = MIXED) {
+		dts::String result;
+
+
+		std::random_device rd;
+		std::mt19937 mt(rd());
+		if (ru) {
+			uniform_int_distribution<int> letters((unsigned char)'А', (unsigned char)'Я');
+			uniform_int_distribution<int> numbers(48, 57);
+
+			uniform_int_distribution<int> ifLetters(0, 1);
+
+			for (int i = 0; i < characters; i++) {
+				switch (mode) {
+				case LETTERS:
+					result.append(letters(mt));
+					break;
+				case NUMBERS:
+					result.append(numbers(mt));
+					break;
+				case MIXED:
+					if (ifLetters(mt)) {
+						result.append(letters(mt));
+					}
+					else {
+						result.append(numbers(mt));
+					}
+					break;
+				}
+
+			}
+		}
+		else {
+			uniform_int_distribution<int> letters(65, 90);
+			uniform_int_distribution<int> numbers(48, 57);
+			uniform_int_distribution<int> ifLetters(0, 1);
+			for (int i = 0; i < characters; i++) {
+				switch (mode) {
+				case LETTERS:
+					result.append(letters(mt));
+					break;
+				case NUMBERS:
+					result.append(numbers(mt));
+					break;
+				case MIXED:
+					if (ifLetters(mt)) {
+						result.append(letters(mt));
+					}
+					else {
+						result.append(numbers(mt));
+					}
+					break;
+				}
+			}
+		}
+		return result;
+	}
+
+	inline dts::String generateCarNumberUA() {
+		dts::String result;
+		vector<dts::String> prefixes = { "AA", "AI", "AC", "BK", "AM", "BI", "BM", "AX", "BB", "AH", "AP", "BT", "AK", "CH", "BE", "BH", "AB", "BX", "CE", "AT", "AO", "BC", "BO", "AE", "BBA", "CA", "" };
+
+		std::random_device rd;
+		std::mt19937 mt(rd());
+		uniform_int_distribution<int> numbers(0, prefixes.size() - 1);
+		result += prefixes[numbers(mt)];
+		result += generateRandomString(4, true, NUMBERS);
+		result += generateRandomString(2, false, LETTERS);
+		return result;
+	}
+	class Car {
+
+	public:
+		dts::String number;
+		Car() {
+			number = generateRandomString(8);
+		}
+		Car(dts::String _number) {
+			number = _number;
+		}
+		Car(const Car& orig) {
+			number = orig.number;
+		}
+		Car& operator=(const Car& orig) {
+			number = orig.number;
+			return *this;
+		}
+	};
 
 	
 }
-
