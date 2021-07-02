@@ -10,4 +10,15 @@
       </ArrayItems>
     </Expand>
   </Type>
+  <Type Name="dts::Stack&lt;*&gt;">
+    <Expand>
+      <Item Name="first" ExcludeView="simple">stack.deque._first</Item>
+    </Expand>
+  </Type>
+  <Type Name="dts::Queue&lt;*&gt;">
+    <Expand>
+      <Item Name="first" ExcludeView="simple">queue.deque._first</Item>
+      <Item Name="last" ExcludeView="simple">queue.deque._last</Item>
+    </Expand>
+  </Type>
 </AutoVisualizer>

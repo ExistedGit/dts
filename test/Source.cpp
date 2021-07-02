@@ -4,6 +4,10 @@
 #include <vector>
 #include <sstream>
 #include "dts.h"
+#include "vector.h"
+#include "linkedlist.h"
+#include "string.h"
+
 #include "htam.h"
 using namespace htam;
 using namespace std;
@@ -12,43 +16,43 @@ using namespace dts;
 #define pause system("pause")
 #define cls system("cls");
 
-bool checkExpressionEncasing(Stack<char>& expression, char currChar, bool encased = false) {
-	if (!expression.count()) return false;
-
-	Vector<char> encaseBegins = { '(', '{', '\'', '"', '<', '[' };
-	Vector<char> encaseEnds = { '\)', '\}', '\'', '"', '>', ']' };
-	map<char, char> encasings;
-	for (int i = 0; i < encaseBegins.size(); i++) encasings[encaseEnds[i]] = encaseBegins[i];
-	
-	char last;  
-	while (expression.count() != 0) {
-		last = expression.pop();
-		
-		if (encaseBegins.find(last) != -1 && currChar == '-') {
-			currChar = last; // если начинаетс€ новое внешнее поле
-			continue;
-		}
-		// —отни тыс€ч точек выхода, но иначе никак
-		if (currChar == encasings[last]) { // ≈сли последний символ закрывающий
-			if (encased) return true; 
-			else currChar = '-';
-		} // если last Ч закрывающий символ не дл€ текущего символа
-		else if (!checkExpressionEncasing(expression, last, true)) return false; // если внутренний символ не закрыт, выражение априори неправильное	
-	}
-	return currChar == '-';
-}
-
-bool checkExpression(String expString) {
-	if (expString.size() == 0) return false;
-	Stack<char> signs;
-	for (int i = expString.size()-1; i >=0; i--) {
-		switch (expString[i]) {
-			case '{': case '}': case '(': case ')': case '"': case '\'': case '<': case '>': case '[': case ']': signs.push(expString[i]); break;
-		}
-	}
-	if (signs.count() == 0) return false;
-	return checkExpressionEncasing(signs, signs.pop());
-}
+//bool checkExpressionEncasing(Stack<char>& expression, char currChar, bool encased = false) {
+//	if (!expression.count()) return false;
+//
+//	Vector<char> encaseBegins = { '(', '{', '\'', '"', '<', '[' };
+//	Vector<char> encaseEnds = { '\)', '\}', '\'', '"', '>', ']' };
+//	map<char, char> encasings;
+//	for (int i = 0; i < encaseBegins.size(); i++) encasings[encaseEnds[i]] = encaseBegins[i];
+//	
+//	char last;  
+//	while (expression.count() != 0) {
+//		last = expression.pop();
+//		
+//		if (encaseBegins.find(last) != -1 && currChar == '-') {
+//			currChar = last; // если начинаетс€ новое внешнее поле
+//			continue;
+//		}
+//		// —отни тыс€ч точек выхода, но иначе никак
+//		if (currChar == encasings[last]) { // ≈сли последний символ закрывающий
+//			if (encased) return true; 
+//			else currChar = '-';
+//		} // если last Ч закрывающий символ не дл€ текущего символа
+//		else if (!checkExpressionEncasing(expression, last, true)) return false; // если внутренний символ не закрыт, выражение априори неправильное	
+//	}
+//	return currChar == '-';
+//}
+//
+//bool checkExpression(String expString) {
+//	if (expString.size() == 0) return false;
+//	Stack<char> signs;
+//	for (int i = expString.size()-1; i >=0; i--) {
+//		switch (expString[i]) {
+//			case '{': case '}': case '(': case ')': case '"': case '\'': case '<': case '>': case '[': case ']': signs.push(expString[i]); break;
+//		}
+//	}
+//	if (signs.count() == 0) return false;
+//	return checkExpressionEncasing(signs, signs.pop());
+//}
 
 
 class Calculator {
@@ -125,24 +129,6 @@ public:
 int main() {
 	//setlocale(LC_ALL, "");
 	//SetConsoleCP(1251); SetConsoleOutputCP(1251);
-	cout.setf(ios::boolalpha);
-	BinaryTree<int, int> bt;
-	for (int i = 1; i <= 12; i++) {
-		bt.push(i, i);
-	}
-	bt.remove(4);
-	bt.print();
-	pause;
-
-	/*while (true) {
-		cls;
-		char buff[200];
-		cout << "¬ведите выражение: ";
-		cin.getline(buff, 200);
-		cin.ignore();
-		cout << Calculator::stackifyExp(buff) << endl;
-		system("pause");
-	}*/
-
+	Queue<int> a = {1, 2, 3, 4, 5};
 	
 }
