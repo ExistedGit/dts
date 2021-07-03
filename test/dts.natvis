@@ -21,4 +21,14 @@
       <Item Name="last" ExcludeView="simple">queue.deque._last</Item>
     </Expand>
   </Type>
+  <Type Name ="dts::String">
+    
+    <DisplayString>{cstr}</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>_size+1</Size>
+        <ValuePointer>cstr</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
 </AutoVisualizer>

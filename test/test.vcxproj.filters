@@ -26,9 +26,6 @@
     <ClInclude Include="dts.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="string.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="linkedlist.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
@@ -36,6 +33,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="map.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="dtstring.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

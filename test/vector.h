@@ -1,8 +1,8 @@
-#pragma once
+п»ї#pragma once
 #include "dts.h"
 
 namespace dts {
-	// Вектор(динамический массив)
+	// Р’РµРєС‚РѕСЂ(РґРёРЅР°РјРёС‡РµСЃРєРёР№ РјР°СЃСЃРёРІ)
 	template <typename Type>
 	class Vector
 	{

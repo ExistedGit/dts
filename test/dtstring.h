@@ -1,8 +1,9 @@
-#pragma once
+п»ї#pragma once
 #include "dts.h"
+#include <map> // РґР»СЏ Р°СЃСЃРѕС†РёР°С‚РёРІРЅРѕРіРѕ РјР°СЃСЃРёРІР° СЃРёРјРІРѕР»РѕРІ РІ toString()
 
 namespace dts {
-	// Строка
+	// РЎС‚СЂРѕРєР°
 	class String
 	{
 	private:
@@ -66,9 +67,11 @@ namespace dts {
 		friend String& operator+=(const String& s, const char* cs);
 		friend String& operator+=(const String& s, int n);
 
-		friend bool operator==(const String& s, const char* cs);
-		friend bool operator!=(const String& s, const char* cs);
+		friend bool operator==(const String& s, const String& cs);
+		friend bool operator!=(const String& s, const String& cs);
 
+		friend bool operator<(const String& left, const String& right);
+		friend bool operator>(const String& left, const String& right);
 		friend class StringBuilder;
 	};
 
@@ -88,7 +91,7 @@ namespace dts {
 		return result.reverse();
 	}
 
-	// операторы для Строки
+	// РѕРїРµСЂР°С‚РѕСЂС‹ РґР»СЏ РЎС‚СЂРѕРєРё
 	inline ostream& operator<<(ostream& os, const String& s)
 	{
 		os << s.cstr;
@@ -163,11 +166,24 @@ namespace dts {
 		return s = result;
 	}
 
-	inline bool operator==(const String& s, const char* cs) {
-		return _stricmp(s.cstr, cs) == 0;
+	inline bool operator>(const String& left, const String& right) {
+		return strcmp(left.cstr, right.cstr) < 0;
 	}
-	inline bool operator!=(const String& s, const char* cs) {
-		return _stricmp(s.cstr, cs) != 0;
+	inline bool operator<(const String& left, const String& right) {
+		return strcmp(left.cstr, right.cstr) > 0;
+	}
+
+	inline bool operator>=(const String & left, const String & right) {
+		if (left == right) return true;
+		if (left > right) return true;
+		return false;
+	}
+
+	inline bool operator==(const String& s, const String& cs) {
+		return strcmp(s.cstr, cs.cstr) == 0;
+	}
+	inline bool operator!=(const String& s, const String& cs) {
+		return strcmp(s.cstr, cs.cstr) != 0;
 	}
 
 	class StringBuilder {
@@ -245,7 +261,7 @@ inline dts::String::String(const string& s) {
 
 inline dts::String::String(int size) {
 	cstr = new char[size];
-	cstr[0] = '\0'; // для strcat-совместимости
+	cstr[0] = '\0'; // РґР»СЏ strcat-СЃРѕРІРјРµСЃС‚РёРјРѕСЃС‚Рё
 	_size = size;
 }
 
@@ -341,7 +357,7 @@ inline char& dts::String::at(int index) {
 		if (index >= 0 && index <= _size) {
 			return cstr[index];
 		}
-		else throw out_of_range("Неверный индекс символа в строке");
+		else throw out_of_range("РќРµРІРµСЂРЅС‹Р№ РёРЅРґРµРєСЃ СЃРёРјРІРѕР»Р° РІ СЃС‚СЂРѕРєРµ");
 	}
 	catch (out_of_range err) {
 		cerr << err.what();
@@ -460,4 +476,4 @@ inline void dts::StringBuilder::clear() {
 }
 
 
-// Перевод числа в строку
+// РџРµСЂРµРІРѕРґ С‡РёСЃР»Р° РІ СЃС‚СЂРѕРєСѓ

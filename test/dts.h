@@ -6,7 +6,6 @@
 
 #include <iostream>
 #include <mutex> // для инициализации вектора списком
-#include <map> // для ассоциативного массива символов в toString()
 using namespace std;
 
 namespace dts {

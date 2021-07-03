@@ -1,4 +1,4 @@
-
+п»ї
 
 #pragma once
 #include <string>
@@ -8,13 +8,13 @@
 
 using namespace std;
 
-// как math, только htam
+// РєР°Рє math, С‚РѕР»СЊРєРѕ htam
 namespace htam {
 	template <typename T, typename = enable_if_t<is_arithmetic_v<T>>>
 	class matrix
 	{
-		// между нами: тут на все случаи жизни методы
-		// мне Андрей подсказывает, что добавлять
+		// РјРµР¶РґСѓ РЅР°РјРё: С‚СѓС‚ РЅР° РІСЃРµ СЃР»СѓС‡Р°Рё Р¶РёР·РЅРё РјРµС‚РѕРґС‹
+		// РјРЅРµ РђРЅРґСЂРµР№ РїРѕРґСЃРєР°Р·С‹РІР°РµС‚, С‡С‚Рѕ РґРѕР±Р°РІР»СЏС‚СЊ
 	private:
 		T** _matrix;
 		int _row, _col;
@@ -101,7 +101,7 @@ namespace htam {
 				newMatrix[i + shift] = _matrix[i];
 			}
 		}
-		// Добавить строку в матрицу с использованием списка инициализации
+		// Р”РѕР±Р°РІРёС‚СЊ СЃС‚СЂРѕРєСѓ РІ РјР°С‚СЂРёС†Сѓ СЃ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµРј СЃРїРёСЃРєР° РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
 		void addRow(initializer_list<T> il, int index = -1) {
 			if (index == -1) index = _row;
 
@@ -271,7 +271,7 @@ namespace htam {
 					}
 					return result;
 				}
-				else throw invalid_argument("Матрицы разных размеров!");
+				else throw invalid_argument("РњР°С‚СЂРёС†С‹ СЂР°Р·РЅС‹С… СЂР°Р·РјРµСЂРѕРІ!");
 			}
 			catch (invalid_argument err) {
 				cerr << err.what();
@@ -291,7 +291,7 @@ namespace htam {
 					return result;
 				}
 
-				else throw invalid_argument("Матрицы разных размеров!");
+				else throw invalid_argument("РњР°С‚СЂРёС†С‹ СЂР°Р·РЅС‹С… СЂР°Р·РјРµСЂРѕРІ!");
 			}
 			catch (invalid_argument err) {
 				cerr << err.what();
@@ -311,7 +311,7 @@ namespace htam {
 					return result;
 				}
 
-				else throw invalid_argument("Матрицы разных размеров!");
+				else throw invalid_argument("РњР°С‚СЂРёС†С‹ СЂР°Р·РЅС‹С… СЂР°Р·РјРµСЂРѕРІ!");
 			}
 			catch (invalid_argument err) {
 				cerr << err.what();
@@ -331,7 +331,7 @@ namespace htam {
 					return result;
 				}
 
-				else throw invalid_argument("Матрицы разных размеров!");
+				else throw invalid_argument("РњР°С‚СЂРёС†С‹ СЂР°Р·РЅС‹С… СЂР°Р·РјРµСЂРѕРІ!");
 			}
 			catch (invalid_argument err) {
 				cerr << err.what();
@@ -374,7 +374,7 @@ namespace htam {
 	template <typename T>
 	istream& operator>>(istream& is, matrix<T>& m)
 	{
-		if (m._row != 0 && m._col != 0) cout << "Введите по " << m._col << " элементов в каждую строку\n";
+		if (m._row != 0 && m._col != 0) cout << "Р’РІРµРґРёС‚Рµ РїРѕ " << m._col << " СЌР»РµРјРµРЅС‚РѕРІ РІ РєР°Р¶РґСѓСЋ СЃС‚СЂРѕРєСѓ\n";
 		for (int i = 0; i < m._row; i++) {
 			cout << i + 1 << ". ";
 			for (int j = 0; j < m._col; j++) {
@@ -397,7 +397,7 @@ namespace htam {
 					return true;
 				}
 			}
-			else throw invalid_argument("Матрицы разных размеров!");
+			else throw invalid_argument("РњР°С‚СЂРёС†С‹ СЂР°Р·РЅС‹С… СЂР°Р·РјРµСЂРѕРІ!");
 		}
 		catch (invalid_argument err) {
 
@@ -440,7 +440,7 @@ namespace cars {
 		std::random_device rd;
 		std::mt19937 mt(rd());
 		if (ru) {
-			uniform_int_distribution<int> letters((unsigned char)'А', (unsigned char)'Я');
+			uniform_int_distribution<int> letters((unsigned char)'Рђ', (unsigned char)'РЇ');
 			uniform_int_distribution<int> numbers(48, 57);
 
 			uniform_int_distribution<int> ifLetters(0, 1);
