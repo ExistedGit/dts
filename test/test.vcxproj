@@ -146,7 +146,8 @@
   <ItemGroup>
     <ClInclude Include="dts.h" />
     <ClInclude Include="htam.h" />
-    <ClInclude Include="linkedlist.h" />
+    <ClInclude Include="linked_list.h" />
+    <ClInclude Include="list.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="dtstring.h" />
     <ClInclude Include="vector.h" />

@@ -6,7 +6,7 @@
 
 #include "dts.h"
 #include "vector.h"
-#include "linkedlist.h"
+#include "list.h"
 #include "dtstring.h"
 #include "map.h"
 #include "htam.h"
@@ -132,11 +132,13 @@ enum WareType {
 
 
 
-
 int main() {
 	//setlocale(LC_ALL, "");
 	//SetConsoleCP(1251); SetConsoleOutputCP(1251);
-	Map<int, int> bt;
+
+	List<int> a = {1, 2, 3,4,5};
+	cout << *(a.end() - 3);
+	/*Map<int, int> bt;
 	for (int i = 1; i <= 100; i++) {
 		bt[i] = i;
 	}
@@ -150,5 +152,5 @@ int main() {
 	bt.clear();
 	cls;
 	for (int i = 1; i <= 10000; i++) bt[i] = i;
-	bt.print();
+	bt.print();*/
 }
