@@ -4,6 +4,7 @@
    <DisplayString>{{ size={_size} }}</DisplayString>
     <Expand>
       <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <Item Name="[capacity]" ExcludeView="simple">_capacity</Item>
       <ArrayItems>
         <Size>_size</Size>
         <ValuePointer>arr</ValuePointer>
@@ -25,6 +26,8 @@
     
     <DisplayString>{cstr}</DisplayString>
     <Expand>
+      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <Item Name="[capacity]" ExcludeView="simple">_capacity</Item>
       <ArrayItems>
         <Size>_size+1</Size>
         <ValuePointer>cstr</ValuePointer>

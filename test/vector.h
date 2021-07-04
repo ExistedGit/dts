@@ -9,6 +9,9 @@ namespace dts {
 	private:
 		Type* arr;
 		int _size;
+		int _capacity;
+
+		void adjustCapacity(int newCap);
 	public:
 		Vector();
 		Vector(const Vector& orig);
@@ -54,6 +57,8 @@ namespace dts {
 			}
 		}
 
+		
+
 		void push_back(const Type& elem);
 
 		int size() const;
@@ -79,20 +84,23 @@ namespace dts {
 namespace dts {
 	template<typename Type>
 	inline Vector<Type>::Vector() {
-		arr = nullptr;
+		
 		_size = 0;
+		_capacity = 4;
+		arr = new Type[_capacity];
 	}
 	template<typename Type>
 	inline Vector<Type>::Vector(const Vector& orig) {
 		_size = orig._size;
-		arr = new Type[orig._size];
+		arr = new Type[orig._capacity];
 		for (int i = 0; i < _size; i++) {
 			arr[i] = orig.arr[i];
 		}
+		_capacity = orig._capacity;
 	}
 	template<typename Type>
-	inline Vector<Type>::Vector(std::initializer_list<Type> _arr) {
-		arr = new Type[_arr.size()];
+	inline Vector<Type>::Vector(std::initializer_list<Type> _arr) : Vector() {
+		adjustCapacity(_arr.size());
 		_size = _arr.size();
 		for (int i = 0; i < _size; i++) {
 			arr[i] = *(_arr.begin() + i);
@@ -107,18 +115,27 @@ namespace dts {
 		_size = 0;
 	}
 	template<typename Type>
-	inline void Vector<Type>::push_back(const Type& elem) {
-
-		Type* p = new Type[_size + 1];
-		int shift = 0;
-		for (size_t i = 0; i < _size; i++)
-		{
-			p[i] = arr[i - shift];
+	inline void Vector<Type>::adjustCapacity(int newCap) {
+		int oldCapacity = _capacity;
+		if (newCap <= _capacity / 2) {
+			while (newCap <= _capacity) _capacity /= 2;
 		}
-		p[_size] = elem;
-		if (arr != nullptr) delete[]arr;
-		_size++;
-		arr = p;
+		else {
+			while (newCap > _capacity) _capacity *= 2;
+		}
+		if (_capacity == oldCapacity) return;
+		Type* oldArr = arr;
+		arr = new Type[_capacity];
+		for (int i = 0; i < _size; i++) {
+			arr[i] = oldArr[i];
+		}
+		delete[]oldArr;
+		oldArr = nullptr;
+	}
+	template<typename Type>
+	inline void Vector<Type>::push_back(const Type& elem) {
+		adjustCapacity(_size + 1);
+		arr[_size++] = elem;
 	}
 	template<typename Type>
 	inline int Vector<Type>::size() const {
@@ -141,24 +158,25 @@ namespace dts {
 	}
 	template<typename Type>
 	inline Type& Vector<Type>::at(int index) {
-		if (index >= 0 && index < _size) return arr[index];
+		try {
+			if (index >= 0 && index < _size) return arr[index];
+			else throw out_of_range("Вектор: неверный индекс");
+		}
+		catch (out_of_range err) {
+			cerr << err.what();
+		}
 	}
 	template<typename Type>
 	inline bool Vector<Type>::remove(int index) {
 		if (index >= 0 && index < _size) {
+			adjustCapacity(_size - 1);
+
 			if (index == -1) index = _size - 1;
-
-			Type* p = new Type[_size - 1];
-			for (int i = 0; i < index; i++) {
-				p[i] = arr[i];
-			}
 			for (int i = index + 1; i < _size; i++) {
-				p[i - 1] = arr[i];
+				arr[i - 1] = arr[i];
 			}
-			delete[]arr;
+			arr[_size] = Type();
 			_size--;
-			arr = p;
-
 			return true;
 		}
 		else return false;

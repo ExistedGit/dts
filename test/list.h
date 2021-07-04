@@ -22,18 +22,18 @@ namespace dts {
 	class List {
 	protected:
 
-		class LinkedElement {
+		class Iterator {
 		
 
 			T value;
-			LinkedElement* next;
-			LinkedElement* prev;
+			Iterator* next;
+			Iterator* prev;
 		public:
-			LinkedElement() {
+			Iterator() {
 				next = nullptr;
 				prev = nullptr;
 			}
-			LinkedElement(const T& _value, LinkedElement* _next = nullptr, LinkedElement* _prev = nullptr) {
+			Iterator(const T& _value, Iterator* _next = nullptr, Iterator* _prev = nullptr) {
 				value = _value;
 				next = _next;
 				prev = _prev;
@@ -42,15 +42,15 @@ namespace dts {
 			T& operator* () {
 				return value;
 			}
-			LinkedElement operator+(int index) {
-				LinkedElement* linkedElem = this;
+			Iterator operator+(int index) {
+				Iterator* linkedElem = this;
 				for (int i = 0; i < index && linkedElem->next != nullptr; i++) {
 					linkedElem = linkedElem->next;
 				}
 				return *linkedElem;
 			}
-			LinkedElement operator-(int index) {
-				LinkedElement* linkedElem = this;
+			Iterator operator-(int index) {
+				Iterator* linkedElem = this;
 				for (int i = 0; i < index && linkedElem->prev!= nullptr; i++) {
 					linkedElem = linkedElem->prev;
 				}
@@ -58,34 +58,27 @@ namespace dts {
 			}
 			friend class List;
 		};
-
-
-		LinkedElement* _first;
-		LinkedElement* _last;
-		int _size;
-
-		void recursivePrint(LinkedElement* l = nullptr);
+		void recursivePrint(Iterator* l = nullptr);
 		void iterativePrint();
 
 		void pushFront(const T& elem);
-
-		
-
-		
 
 		T& getElemFirst(int index);
 		T& getElemLast(int index);
 		
 
-		void bubbleSortCycleR(LinkedElement* linkedElem = nullptr);
+		void bubbleSortCycleR(Iterator* linkedElem = nullptr);
 		void bubbleSortI();
-
 
 		T popFirst(int index);
 		T popLast(int index);
 
-		int findLeftR(LinkedElement* linkedElem, const T& elem, int currIndex = 0);
-		int findRightR(LinkedElement* linkedElem, const T& elem, int currIndex = 0, int lastFoundIndex = 0);
+		int findLeftR(Iterator* linkedElem, const T& elem, int currIndex = 0);
+		int findRightR(Iterator* linkedElem, const T& elem, int currIndex = 0, int lastFoundIndex = 0);
+
+		Iterator* _first;
+		Iterator* _last;
+		int _size;
 	public:
 		int find(const T& elem, bool right = false);
 
@@ -106,11 +99,11 @@ namespace dts {
 			}
 			else {
 
-				_first = new LinkedElement(orig._first->value);
-				LinkedElement* linkedElem = _first;
-				LinkedElement* origLinkedElem = orig._first;
+				_first = new Iterator(orig._first->value);
+				Iterator* linkedElem = _first;
+				Iterator* origLinkedElem = orig._first;
 				while (origLinkedElem->next != nullptr) {
-					linkedElem->next = new LinkedElement(origLinkedElem->next->value, nullptr, linkedElem);
+					linkedElem->next = new Iterator(origLinkedElem->next->value, nullptr, linkedElem);
 					linkedElem = linkedElem->next;
 					origLinkedElem = origLinkedElem->next;
 				}
@@ -134,8 +127,8 @@ namespace dts {
 
 		void print();
 
-		LinkedElement& end();
-		LinkedElement& begin();
+		Iterator& end();
+		Iterator& begin();
 
 		T& at(int index);
 
@@ -234,28 +227,28 @@ namespace dts {
 	//template<typename T>
 	//class PriorityQueue{
 	//protected:
-	//	class LinkedElement {
+	//	class Iterator {
 	//	public:
 
 	//		T value;
-	//		LinkedElement* next;
-	//		LinkedElement* prev;
+	//		Iterator* next;
+	//		Iterator* prev;
 	//		int priority;
-	//		LinkedElement() {
+	//		Iterator() {
 	//			value = T();
 	//			next = nullptr;
 	//			prev = nullptr;
 	//			priority = 0;
 	//		}
-	//		LinkedElement(const T& _value, int _priority = 0, LinkedElement* _next = nullptr, LinkedElement* _prev = nullptr) {
+	//		Iterator(const T& _value, int _priority = 0, Iterator* _next = nullptr, Iterator* _prev = nullptr) {
 	//			value = _value;
 	//			next = _next;
 	//			prev = _prev;
 	//			priority = _priority;
 	//		}
 
-	//		LinkedElement* operator+(int index) {
-	//			LinkedElement* linkedElem = this;
+	//		Iterator* operator+(int index) {
+	//			Iterator* linkedElem = this;
 	//			for (int i = 0; i < index && linkedElem->next != nullptr; i++) {
 	//				linkedElem = linkedElem->next;
 	//			}
@@ -272,7 +265,7 @@ namespace dts {
 	template<typename T>
 	inline List<T> toDoubleList(const linked_list<T>& ll) {
 		List<T> result;
-		typename linked_list<T>::LinkedElement node = ll._first;
+		typename linked_list<T>::Iterator node = ll._first;
 		while (node->next != nullptr) {
 			result.push_back(node->value);
 			node = node->next;
@@ -282,7 +275,7 @@ namespace dts {
 	template<typename T>
 	inline Vector<T> toArray(const linked_list<T>& ll) {
 		Vector<T> result;
-		typename linked_list<T>::LinkedElement node = ll._first;
+		typename linked_list<T>::Iterator node = ll._first;
 		while (node->next != nullptr) {
 			result.push_back(node->value);
 			node = node->next;
@@ -290,7 +283,7 @@ namespace dts {
 		return result;
 	}
 	template<typename T>
-	inline void List<T>::recursivePrint(LinkedElement* l) { // Рекурсивная начинка вывода списка
+	inline void List<T>::recursivePrint(Iterator* l) { // Рекурсивная начинка вывода списка
 		if (_first == nullptr) return;
 		if (l == nullptr) {
 			cout << _first->value << " ";
@@ -310,7 +303,7 @@ namespace dts {
 	template<typename T>
 	inline void List<T>::iterativePrint() {
 		if (_first == nullptr) return;
-		LinkedElement* l = _first;
+		Iterator* l = _first;
 		for (int i = 0; i < _size; i++) {
 			cout << l->value << " ";
 			l = l->next;
@@ -319,17 +312,17 @@ namespace dts {
 	template<typename T>
 	inline void List<T>::pushFront(const T& elem) {
 		if (_first == nullptr) {
-			_first = new LinkedElement(elem);
+			_first = new Iterator(elem);
 			_last = _first;
 		}
-		_first->prev = new LinkedElement(elem);
+		_first->prev = new Iterator(elem);
 		_first = _first->prev;
 	}
 	template<typename T>
 	inline T& List<T>::getElemLast(int index) { // нахождение с конца
 		if (index < 0 || index >= _size) throw out_of_range("Неверный индекс связанного списка");
 
-		LinkedElement* linkedElem = _last;
+		Iterator* linkedElem = _last;
 		for (int current = _size - 1; current != index; current--) {
 			linkedElem = linkedElem->prev;
 		}
@@ -339,14 +332,14 @@ namespace dts {
 	inline T& List<T>::getElemFirst(int index) { // нахождение с начала
 		if (index < 0 || index >= _size) throw out_of_range("Неверный индекс связанного списка");
 
-		LinkedElement* linkedElem = _first;
+		Iterator* linkedElem = _first;
 		for (int current = 0; current != index; current++) {
 			linkedElem = linkedElem->next;
 		}
 		return linkedElem->value;
 	}
 	template<typename T>
-	inline void List<T>::bubbleSortCycleR(LinkedElement* linkedElem) { // Метод, проводящий один цикл пузырьковой сортировки(повторяется нужное количество раз уже в bubbleSort()
+	inline void List<T>::bubbleSortCycleR(Iterator* linkedElem) { // Метод, проводящий один цикл пузырьковой сортировки(повторяется нужное количество раз уже в bubbleSort()
 		if (linkedElem == nullptr) linkedElem = _first; // первый рассматриваемый элемент будет первым в списке
 
 		if (linkedElem->next != nullptr) { // Если есть следующий элемент, то...
@@ -369,7 +362,7 @@ namespace dts {
 	}
 	template<typename T>
 	inline void List<T>::bubbleSortI() {
-		LinkedElement linkedElem = _first;
+		Iterator linkedElem = _first;
 		for (int i = 0; i < _size; i++) {
 			if (linkedElem->value > linkedElem->next->value) {
 				swap(linkedElem->value, linkedElem->next->value);
@@ -380,7 +373,7 @@ namespace dts {
 	}
 	template<typename T>
 	inline T List<T>::popLast(int index) {
-		LinkedElement* linkedElem = _first;
+		Iterator* linkedElem = _first;
 		for (int curr = _size - 1; curr != index; curr--) {
 			linkedElem = linkedElem->prev;
 		}
@@ -394,7 +387,7 @@ namespace dts {
 	}
 	template<typename T>
 	inline T List<T>::popFirst(int index) {
-		LinkedElement* linkedElem = _first;
+		Iterator* linkedElem = _first;
 		for (int curr = 0; curr != index; curr++) {
 			linkedElem = linkedElem->next;
 		}
@@ -407,7 +400,7 @@ namespace dts {
 		return value;
 	}
 	template<typename T>
-	inline int List<T>::findLeftR(LinkedElement* linkedElem, const T& elem, int currIndex) {
+	inline int List<T>::findLeftR(Iterator* linkedElem, const T& elem, int currIndex) {
 		if (linkedElem->value == elem) {
 			return currIndex;
 		}
@@ -416,7 +409,7 @@ namespace dts {
 		}
 	}
 	template<typename T>
-	inline int List<T>::findRightR(LinkedElement* linkedElem, const T& elem, int currIndex, int lastFoundIndex) {
+	inline int List<T>::findRightR(Iterator* linkedElem, const T& elem, int currIndex, int lastFoundIndex) {
 		if (linkedElem == nullptr || linkedElem->next == nullptr) {
 			if (lastFoundIndex == 0) return -1;
 			return lastFoundIndex;
@@ -458,11 +451,11 @@ namespace dts {
 		}
 		else {
 
-			_first = new LinkedElement(orig._first->value);
-			LinkedElement* linkedElem = _first;
-			LinkedElement* origLinkedElem = orig._first;
+			_first = new Iterator(orig._first->value);
+			Iterator* linkedElem = _first;
+			Iterator* origLinkedElem = orig._first;
 			while (origLinkedElem->next != nullptr) {
-				linkedElem->next = new LinkedElement(origLinkedElem->next->value, nullptr, linkedElem);
+				linkedElem->next = new Iterator(origLinkedElem->next->value, nullptr, linkedElem);
 				linkedElem = linkedElem->next;
 				origLinkedElem = origLinkedElem->next;
 			}
@@ -485,13 +478,13 @@ namespace dts {
 	inline List<T>* List<T>::push_back(const T& elem) {
 
 		if (_last == nullptr) {
-			_last = new LinkedElement(elem);
+			_last = new Iterator(elem);
 			_first = _last;
 		}
 		else {
-			LinkedElement* oldLast = _last;
+			Iterator* oldLast = _last;
 
-			oldLast->next = new LinkedElement(elem, nullptr, oldLast);
+			oldLast->next = new Iterator(elem, nullptr, oldLast);
 			_last = oldLast->next;
 		}
 		_size++;
@@ -501,12 +494,12 @@ namespace dts {
 	template<typename T>
 	inline List<T>* List<T>::push_front(const T& elem) {
 		if (_first == nullptr) {
-			_first = new LinkedElement(elem);
+			_first = new Iterator(elem);
 			_last = _first;
 		}
 		else {
-			LinkedElement* oldFirst = _first;
-			_first = new LinkedElement(elem, oldFirst);
+			Iterator* oldFirst = _first;
+			_first = new Iterator(elem, oldFirst);
 			oldFirst->prev = _first;
 		}
 		_size++;
@@ -517,7 +510,7 @@ namespace dts {
 		if (_last == nullptr) throw runtime_error("Список пуст");
 
 		T value = _last->value;
-		LinkedElement* prev = _last->prev;
+		Iterator* prev = _last->prev;
 		if (prev == nullptr) {
 			delete _first;
 			_first = nullptr;
@@ -535,7 +528,7 @@ namespace dts {
 	inline T List<T>::pop_front() {
 		if (_first == nullptr) throw runtime_error("Список пуст");
 		T value = _first->value;
-		LinkedElement* next = _first->next;
+		Iterator* next = _first->next;
 		if (next == nullptr) {
 			_size--;
 			delete _first;
@@ -576,11 +569,11 @@ namespace dts {
 		cout << endl;
 	}
 	template<typename T>
-	inline typename List<T>::LinkedElement& List<T>::begin() {
+	inline typename List<T>::Iterator& List<T>::begin() {
 		return *_first;
 	}
 	template<typename T>
-	inline typename List<T>::LinkedElement& List<T>::end() {
+	inline typename List<T>::Iterator& List<T>::end() {
 		return *_last;
 	}
 	template<typename T>
@@ -604,7 +597,7 @@ namespace dts {
 	template<typename T>
 	inline linked_list<T> toList(const List<T>& dll) {
 		linked_list<T> result;
-		typename List<T>::LinkedElement node = dll._first;
+		typename List<T>::Iterator node = dll._first;
 		while (node->next != nullptr) {
 			result.push_back(node->value);
 			node = node->next;
@@ -615,7 +608,7 @@ namespace dts {
 	inline Vector<T> toArray(const List<T>& dll) {
 		Vector<T> result;
 		
-		typename List<T>::LinkedElement node = dll._first;
+		typename List<T>::Iterator node = dll._first;
 		while (node->next != nullptr) {
 			result.push_back(node->value);
 			node = node->next;

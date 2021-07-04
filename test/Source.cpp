@@ -22,7 +22,7 @@ bool checkExpressionEncasing(Stack<char>& expression, char currChar, bool encase
 
 	Vector<char> encaseBegins = { '(', '{', '\'', '"', '<', '[' };
 	Vector<char> encaseEnds = { '\)', '\}', '\'', '"', '>', ']' };
-	map<char, char> encasings;
+	Map<char, char> encasings;
 	for (int i = 0; i < encaseBegins.size(); i++) encasings[encaseEnds[i]] = encaseBegins[i];
 	
 	char last;  
@@ -134,10 +134,11 @@ enum WareType {
 
 int main() {
 	//setlocale(LC_ALL, "");
-	//SetConsoleCP(1251); SetConsoleOutputCP(1251);
+	SetConsoleCP(1251); SetConsoleOutputCP(1251);
 
-	List<int> a = {1, 2, 3,4,5};
-	cout << *(a.end() - 3);
+	String a = "Я получил власть";
+	a.append(", которая и не снилась моему отцу.");
+	cout << a << endl;
 	/*Map<int, int> bt;
 	for (int i = 1; i <= 100; i++) {
 		bt[i] = i;

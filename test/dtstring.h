@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "dts.h"
-#include <map> // для ассоциативного массива символов в toString()
-
+//#include <map> // для ассоциативного массива символов в toString()
+#include "map.h" // Переиграли и уничтожил
 namespace dts {
 	// Строка
 	class String
@@ -9,6 +9,9 @@ namespace dts {
 	private:
 		char* cstr;
 		int _size;
+		int _capacity;
+
+		void adjustCapacity(int newCap);
 	public:
 		const char* c_str();
 
@@ -20,35 +23,32 @@ namespace dts {
 			return result;
 		}
 
+		
+
 		String();
-		String(const string& s);
 		explicit String(int size);
 		String(const String& s);
 		String(const char* cs);
+		String(const char c) : String() {
+			cstr[0] = c;
+			cstr[1] = '\0';
+		}
 		~String();
 		String& operator=(const String& s) {
-			if (s.cstr != nullptr) {
-				cstr = new char[strLen(s.cstr) + 1];
-				strcpy(cstr, s.cstr);
-			}
-			else cstr = nullptr;
+			
+			delete[]cstr;
+			cstr = nullptr;
+
+			cstr = new char[s._capacity];
+			strcpy(cstr, s.cstr);
+			_capacity = s._capacity;
 			_size = s._size;
-			return *this;
-		}
-		String& operator=(const char* cs) {
-			if (cs != nullptr) {
-				cstr = new char[strLen(cs) + 1];
-				strcpy(cstr, cs);
-			}
-			else cstr = nullptr;
-			_size = strLen(cs);
 			return *this;
 		}
 
 		int size() const;
-		int length();
+		int length() const;
 		String& append(const String& s);
-		String& append(char s);
 
 		String& reverse();
 
@@ -60,11 +60,9 @@ namespace dts {
 		friend ostream& operator<<(ostream& os, const String& s);
 		friend istream& operator>>(istream& is, String& s);
 		friend String operator+(const String& s1, const String& s2);
-		friend String operator+(const String& s, const char* cs);
 		friend String operator+(const String& s, int n);
 
 		friend String& operator+=(const String& s1, const String& s2);
-		friend String& operator+=(const String& s, const char* cs);
 		friend String& operator+=(const String& s, int n);
 
 		friend bool operator==(const String& s, const String& cs);
@@ -78,10 +76,7 @@ namespace dts {
 	inline String toString(int n) {
 		String result = "";
 		if (n == 0) result.append("0");
-
-		map<int, char> digitChar = { { 0, '0' },{ 1, '1' },{ 2, '2' },{ 3, '3' },{ 4, '4' },{ 5, '5' },{ 6, '6' },{ 7, '7' },{ 8, '9' },{ 9, '9' } };
-
-
+		Map<int, char> digitChar = { { 0, '0' },{ 1, '1' },{ 2, '2' },{ 3, '3' },{ 4, '4' },{ 5, '5' },{ 6, '6' },{ 7, '7' },{ 8, '9' },{ 9, '9' } };
 
 		while (n > 0) {
 			result.append(digitChar[n % 10]);
@@ -119,24 +114,10 @@ namespace dts {
 		result.append(s2);
 		return result;
 	}
-
-	inline String operator+(const String& s, const char* cs)
-	{
-		String result = s;
-		result.append(cs);
-		return result;
-	}
-
 	inline String operator+(const String& s, int n)
 	{
 		String result = s;
 		result.append(toString(n));
-		return result;
-	}
-	inline String operator+(const String& s, char cs)
-	{
-		String result = s;
-		result.append(cs);
 		return result;
 	}
 
@@ -145,19 +126,6 @@ namespace dts {
 		String result = s1;
 		result.append(s2);
 		return s1 = result;
-	}
-
-	inline String& operator+=(String& s, const char* cs)
-	{
-		String result = s;
-		result.append(cs);
-		return s = result;
-	}
-	inline String& operator+=(String& s, const char cs)
-	{
-		String result = s;
-		result.append(cs);
-		return s = result;
 	}
 	inline String& operator+=(String& s, int n)
 	{
@@ -240,59 +208,69 @@ namespace dts {
 	}
 }
 
+inline void dts::String::adjustCapacity(int newCap) {
+	int oldCapacity = _capacity;
+	if (newCap <= _capacity / 2) {
+		while (newCap <= _capacity) _capacity /= 2;
+	}
+	else {
+		while (newCap > _capacity) _capacity *= 2;
+	}
+	if (_capacity == oldCapacity) return;
+	
+
+	char* oldArr = cstr;
+	cstr = new char[_capacity];
+	strcpy(cstr, oldArr);
+
+	delete[]oldArr;
+	oldArr = nullptr;
+	
+}
+
 inline const char* dts::String::c_str() {
 	return cstr;
 }
 
 inline dts::String::String() {
-	cstr = nullptr;
+	_capacity = 4;
 	_size = 0;
+	cstr = new char[_capacity];
+	cstr[0] = '\0';
 }
 
-inline dts::String::String(const string& s) {
-	if (!s.empty()) {
-		cstr = new char[s.size() + 1];
-		strcpy(cstr, s.c_str());
-	}
-	else cstr = nullptr;
 
-	_size = s.size();
-}
-
-inline dts::String::String(int size) {
-	cstr = new char[size];
+inline dts::String::String(int size) : String() {
+	adjustCapacity(size);
 	cstr[0] = '\0'; // для strcat-совместимости
 	_size = size;
 }
 
 inline dts::String::String(const String& s) {
-	if (s.cstr != nullptr) {
-		cstr = new char[strLen(s.cstr) + 1];
-		strcpy(cstr, s.cstr);
-	}
-	else cstr = nullptr;
-
+	
+	
+	cstr = new char[s._capacity];
+    strcpy(cstr, s.cstr);
+	
+	_capacity = s._capacity;
 	_size = s._size;
 }
 
-inline dts::String::String(const char* cs) {
+inline dts::String::String(const char* cs) : String() {
+	
 	if (cs != nullptr) {
-		cstr = new char[strLen(cs) + 1];
+		adjustCapacity(strLen(cs)+1);
 		strcpy(cstr, cs);
 		_size = strLen(cs);
 	}
-	else {
-		cstr = nullptr;
-		_size = strLen(cs);
-	}
-
 }
 
 inline dts::String::~String() {
 	if (cstr != nullptr) {
-		delete[]cstr;
+		delete cstr;
 		cstr = nullptr;
 		_size = 0;
+		_capacity = 0;
 	}
 }
 
@@ -300,42 +278,14 @@ inline int dts::String::size() const {
 	return _size;
 }
 
-inline int dts::String::length() {
+inline int dts::String::length() const {
 	return _size;
 }
 
 inline dts::String& dts::String::append(const String& s) {
-	char* newCStr = new char[_size + s._size + 1];
-	if (cstr != nullptr) strcpy(newCStr, cstr);
-	else {
-		if (s.cstr != nullptr) strcpy(newCStr, s.cstr);
-		cstr = newCStr;
-		_size = _size + s._size;
-		return *this;
-	}
-	if (s.cstr != nullptr) strcat(newCStr, s.cstr);
-	if (cstr != nullptr) {
-		delete[]cstr;
-		cstr = nullptr;
-	}
-	cstr = newCStr;
+	adjustCapacity(_size + s._size + 1);
+	strcat(cstr, s.cstr);
 	_size = _size + s._size;
-	return *this;
-}
-
-inline dts::String& dts::String::append(char s) {
-
-
-	char* newCStr = new char[_size + 2];
-	if (cstr != nullptr) strcpy(newCStr, cstr);
-	newCStr[_size] = s;
-	newCStr[_size + 1] = '\0';
-	if (cstr != nullptr) {
-		delete[]cstr;
-		cstr = nullptr;
-	}
-	cstr = newCStr;
-	_size++;
 	return *this;
 }
 
