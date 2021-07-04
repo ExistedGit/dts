@@ -590,14 +590,6 @@ namespace dts {
 		return _first == nullptr;
 	}
 	template<typename T>
-	inline typename PriorityQueue<T>::Iterator PriorityQueue<T>::begin() {
-		return *_first;
-	}
-	template<typename T>
-	inline typename PriorityQueue<T>::Iterator PriorityQueue<T>::end() {
-		return *_last;
-	}
-	template<typename T>
 	inline T PriorityQueue<T>::pop() {
 		try {
 			if (_last == nullptr) throw runtime_error("Очередь с приоритетом пуста(dequeue).");
