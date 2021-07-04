@@ -1,4 +1,4 @@
-
+п»ї
 #pragma once
 #include <Windows.h>
 #include <vector>
@@ -31,15 +31,15 @@ bool checkExpressionEncasing(Stack<char>& expression, char currChar, bool encase
 		last = expression.pop();
 		
 		if (encaseBegins.find(last) != -1 && currChar == '-') {
-			currChar = last; // если начинается новое внешнее поле
+			currChar = last; // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 			continue;
 		}
-		// Сотни тысяч точек выхода, но иначе никак
-		if (currChar == encasings[last]) { // Если последний символ закрывающий
+		// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+		if (currChar == encasings[last]) { // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 			if (encased) return true; 
 			else currChar = '-';
-		} // если last — закрывающий символ не для текущего символа
-		else if (!checkExpressionEncasing(expression, last, true)) return false; // если внутренний символ не закрыт, выражение априори неправильное	
+		} // пїЅпїЅпїЅпїЅ last пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		else if (!checkExpressionEncasing(expression, last, true)) return false; // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ	
 	}
 	return currChar == '-';
 }

@@ -407,6 +407,124 @@ namespace dts {
 			return **_last;
 		}
 	};
+
+	template<typename T>
+	class PriorityQueue{
+	
+		class Iterator {
+			T value;
+			Iterator* next;
+			Iterator* prev;
+		public:
+			int priority;
+			Iterator() {
+				value = T();
+				next = nullptr;
+				prev = nullptr;
+				priority = 0;
+			}
+			Iterator(const T& _value, int _priority = 0, Iterator* _next = nullptr, Iterator* _prev = nullptr) {
+				value = _value;
+				next = _next;
+				prev = _prev;
+				priority = _priority;
+			}
+			T& operator*() {
+				return value;
+			}
+			Iterator operator+(int index) {
+				Iterator* linkedElem = this;
+				for (int i = 0; i < index && linkedElem->next != nullptr; i++) {
+					linkedElem = linkedElem->next;
+				}
+				return *linkedElem;
+			}
+			Iterator operator-(int index) {
+				Iterator* linkedElem = this;
+				for (int i = 0; i < index && linkedElem->prev != nullptr; i++) {
+					linkedElem = linkedElem->prev;
+				}
+				return *linkedElem;
+			}
+			Iterator& operator+=(int index) {
+				*this = *this + index;
+				return *this;
+			}
+			Iterator& operator-=(int index) {
+				*this = *this - index;
+				return *this;
+			}
+
+			Iterator& operator++() {
+				*this += 1;
+				return *this;
+			}
+			Iterator& operator--() {
+				*this -= 1;
+				return *this;
+			}
+			Iterator operator++(int i) {
+				Iterator tmp = *this;
+				*this += 1;
+				return tmp;
+			}
+			Iterator operator--(int i) {
+				Iterator tmp = *this;
+				*this -= 1;
+				return tmp;
+			}
+
+			bool operator==(const Iterator& right) {
+				return value == right.value && next == right.next && prev == right.prev;
+			}
+			bool operator!=(const Iterator& right) {
+				return !(*this == right);
+			}
+			bool operator<(const Iterator& right) {
+				Iterator* it = this;
+				while (it->next != nullptr) {
+					it = it->next;
+					if (*it == right) return true;
+				}
+				return false;
+			}
+			bool operator>(const Iterator& right) {
+				Iterator* it = this;
+				while (it->prev != nullptr) {
+					it = it->prev;
+					if (*it == right) return true;
+				}
+				return false;
+			}
+			bool operator<=(const Iterator& right) {
+				return *this == right || *this < right;
+			}
+			bool operator>=(const Iterator& right) {
+				return *this == right || *this > right;
+			}
+
+			friend class PriorityQueue;
+		};
+	protected:
+		Iterator* _first;
+		Iterator* _last;
+
+		int topPriority;
+		Iterator* _top;
+
+		void adjustTop(Iterator* it, int priority);
+	public:
+		PriorityQueue();
+		PriorityQueue(const initializer_list<T> il);
+		PriorityQueue(const PriorityQueue<T>& orig);
+
+		void push(const T& elem, int priority);
+		T pop();
+		bool empty() const;
+		Iterator begin();
+		Iterator end();
+		Iterator top();
+	};
 	template<typename T>
 	inline void PriorityQueue<T>::adjustTop(Iterator* it, int priority) {
 		if (it == nullptr) return;
@@ -464,12 +582,20 @@ namespace dts {
 
 			adjustTop(it->prev, priority);
 		}
-		if (_first->prev != nullptr) _first = _first->prev;
 		if (_last->next != nullptr)_last = _last->next;
+		if (_first->prev != nullptr) _first = _first->prev;
 	}
 	template<typename T>
 	inline bool PriorityQueue<T>::empty() const {
 		return _first == nullptr;
+	}
+	template<typename T>
+	inline typename PriorityQueue<T>::Iterator PriorityQueue<T>::begin() {
+		return *_first;
+	}
+	template<typename T>
+	inline typename PriorityQueue<T>::Iterator PriorityQueue<T>::end() {
+		return *_last;
 	}
 	template<typename T>
 	inline T PriorityQueue<T>::pop() {
