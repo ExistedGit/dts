@@ -10,6 +10,7 @@
 #include "dtstring.h"
 #include "map.h"
 #include "htam.h"
+#include <list>
 using namespace htam;
 using namespace std;
 using namespace dts;
@@ -131,27 +132,17 @@ enum WareType {
 
 
 
-
 int main() {
 	//setlocale(LC_ALL, "");
 	SetConsoleCP(1251); SetConsoleOutputCP(1251);
-
-	String a = "Я получил власть";
-	a.append(", которая и не снилась моему отцу.");
-	cout << a << endl;
-	/*Map<int, int> bt;
-	for (int i = 1; i <= 100; i++) {
-		bt[i] = i;
+	checkExpression("(()())");
+	PriorityQueue<int> pq;
+	pq.push(10, 10);
+	pq.push(30, 30);
+	pq.push(20, 20);
+	pq.push(5, 5);
+	pq.push(1, 1);
+	while (!pq.empty()) {
+		cout << pq.pop() << " ";
 	}
-	bt.print();
-	pause;
-	cls;
-	bt.remove(64);
-	bt.remove(63);
-	bt.print();
-	pause;
-	bt.clear();
-	cls;
-	for (int i = 1; i <= 10000; i++) bt[i] = i;
-	bt.print();*/
 }
