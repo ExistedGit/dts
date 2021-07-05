@@ -11,7 +11,7 @@ using namespace std;
 namespace dts {
 	
 	template<typename T>
-	class linked_list;
+	class ForwardList;
 	template<typename T>
 	class List;
 	template<typename T>
