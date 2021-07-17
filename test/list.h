@@ -137,124 +137,133 @@ namespace dts {
 	public:
 		
 
-		class Iterator {
+		class Node {
 		protected:
 			T value;
-			Iterator* next;
-			Iterator* prev;
+			Node* next;
+			Node* prev;
 		public:
-			Iterator() {
+			Node() {
 				value = T();
 				next = nullptr;
 				prev = nullptr;
 			}
-			Iterator(const T& _value, Iterator* _next = nullptr, Iterator* _prev = nullptr) {
+			Node(const T& _value, Node* _next = nullptr, Node* _prev = nullptr) {
 				value = _value;
 				next = _next;
 				prev = _prev;
 			}
-			Iterator(nullptr_t np) {
+			Node(nullptr_t np) {
 				value = T();
 				next = nullptr;
 				prev = nullptr;
 			}
 
 			T& operator* () {
-				return value;
+				return this->value;
 			}
-			Iterator operator+(int index) {
-				Iterator* linkedElem = this;
-				for (int i = 0; i < index && linkedElem->next != nullptr; i++) {
-					linkedElem = linkedElem->next;
-				}
-				return *linkedElem;
-			}
-			Iterator operator-(int index) {
-				Iterator* linkedElem = this;
-				for (int i = 0; i < index && linkedElem->prev != nullptr; i++) {
-					linkedElem = linkedElem->prev;
-				}
-				return *linkedElem;
-			}
-			Iterator& operator+=(int index) {
-				*this = *this + index;
-				return *this;
-			}
-			Iterator& operator-=(int index) {
-				*this = *this - index;
-				return *this;
-			}
-			
-			Iterator& operator++() {
-				*this += 1;
-				return *this;
-			}
-			Iterator& operator--() {
-				*this -= 1;
-				return *this;
-			}
-			Iterator operator++(int i) {
-				Iterator tmp = *this;
-				*this += 1;
-				return tmp;
-			}
-			Iterator operator--(int i) {
-				Iterator tmp = *this;
-				*this -= 1;
-				return tmp;
-			}
+			//Node operator+(int index) {
 
-			bool operator==(const Iterator& right) {
-				return value == right.value && next == right.next && prev == right.prev;
-			}
-			bool operator!=(const Iterator& right) {
-				return !(*this==right);
-			}
-			bool operator<(const Iterator& right) {
-				Iterator* it = this;
-				while (it->next != nullptr) {
-					it = it->next;
-					if (*it == right) return true;
-				}
-				return false;
-			}
-			bool operator>(const Iterator& right) {
-				Iterator* it = this;
-				while (it->prev != nullptr) {
-					it = it->prev;
-					if (*it == right) return true;
-				}
-				return false;
-			}
-			bool operator<=(const Iterator& right) {
-				return *this == right || *this < right;
-			}
-			bool operator>=(const Iterator& right) {
-				return *this == right || *this > right;
-			}
+			//	Node* linkedElem = this;
+			//	for (int i = 0; i < index && linkedElem->next != nullptr; i++) {
+			//		linkedElem = linkedElem->next;
+			//	}
+			//	return Node(linkedElem);
+			//}
+			//Node operator-(int index) {
+			//	Node* linkedElem = this;
+			//	for (int i = 0; i < index && linkedElem->prev != nullptr; i++) {
+			//		linkedElem = linkedElem->prev;
+			//	}
+			//	return Node(linkedElem);
+			//}
+			//Node& operator+=(int index) {
+			//	*this = *this + index;
+			//	return *this;
+			//}
+			//Node& operator-=(int index) {
+			//	*this = *this - index;
+			//	return *this;
+			//}
+
+			//Node& operator++() {
+			//	*this += 1;
+			//	return *this;
+			//}
+			//Node& operator--() {
+			//	*this -= 1;
+			//	return *this;
+			//}
+			//Node operator++(int i) {
+			//	Node tmp = *this;
+			//	*this += 1;
+			//	return tmp;
+			//}
+			//Node operator--(int i) {
+			//	Node tmp = *this;
+			//	*this -= 1;
+			//	return tmp;
+			//}
+
+			//bool operator==(const Node& right) {
+			//	return this == right this;
+			//}
+			//bool operator!=(const Node& right) {
+			//	return this != right this;
+			//}
+			//bool operator<(const Node& right) {
+			//	Node* it = this;
+			//	while (it->next != nullptr) {
+			//		it = it->next;
+			//		if (it == right this) return true;
+			//	}
+			//	return false;
+			//}
+			//bool operator>(const Node& right) {
+			//	Node* it = this;
+			//	while (it->prev != nullptr) {
+			//		it = it->prev;
+			//		if (it == right this) return true;
+			//	}
+			//	return false;
+			//}
+			//bool operator<=(const Node& right) {
+			//	return *this == right || *this < right;
+			//}
+			//bool operator>=(const Node& right) {
+			//	return *this == right || *this > right;
+			//}
+			
 			
 			friend class List;
 		};
-		
+
+		//class Iterator {
+		//	Node* ptr;
+		//public:
+		//	Iterator(Node* ptr) {
+		//		this->ptr = ptr;
+		//	}
+		//};
 	protected:
 		
-		void pushFront(const T& elem);
 
 		T& getElemFirst(int index);
 		T& getElemLast(int index);
-		
 
-		void bubbleSortCycleR(Iterator* linkedElem = nullptr);
+		void pushFront(const T& elem);
+
+		void bubbleSortCycleR(Node* linkedElem = nullptr);
 		void bubbleSortI();
 
 		T popFirst(int index);
 		T popLast(int index);
 
-		int findLeftR(Iterator* linkedElem, const T& elem, int currIndex = 0);
-		int findRightR(Iterator* linkedElem, const T& elem, int currIndex = 0, int lastFoundIndex = 0);
+		int findLeftR(Node* linkedElem, const T& elem, int currIndex = 0);
+		int findRightR(Node* linkedElem, const T& elem, int currIndex = 0, int lastFoundIndex = 0);
 
-		Iterator* _first;
-		Iterator* _last;
+		Node* _first;
+		Node* _last;
 		int _size;
 	public:
 		int find(const T& elem, bool right = false);
@@ -276,11 +285,11 @@ namespace dts {
 			}
 			else {
 
-				_first = new Iterator(orig._first->value);
-				Iterator* linkedElem = _first;
-				Iterator* origLinkedElem = orig._first;
+				_first = new Node(orig._first->value);
+				Node* linkedElem = _first;
+				Node* origLinkedElem = orig._first;
 				while (origLinkedElem->next != nullptr) {
-					linkedElem->next = new Iterator(origLinkedElem->next->value, nullptr, linkedElem);
+					linkedElem->next = new Node(origLinkedElem->next->value, nullptr, linkedElem);
 					linkedElem = linkedElem->next;
 					origLinkedElem = origLinkedElem->next;
 				}
@@ -304,8 +313,8 @@ namespace dts {
 
 		void print();
 
-		Iterator& end();
-		Iterator& begin();
+		Node& end();
+		Node& begin();
 
 		T& at(int index);
 
@@ -342,13 +351,13 @@ namespace dts {
 	public:
 		Deque() {};
 
-		Deque* enqueueFirst(const T& elem);
-		Deque* enqueueLast(const T& elem);
+		Deque* push_front(const T& elem);
+		Deque* push_back(const T& elem);
 
-		T dequeueFirst();
-		T dequeueLast();
-		typename List<T>::Iterator begin();
-		typename List<T>::Iterator end();
+		T pop_front();
+		T pop_back();
+		typename List<T>::Node& begin();
+		typename List<T>::Node& end();
 		int count() const;
 		T& operator[](unsigned int index) const {
 			return deque.at(index);
@@ -398,19 +407,19 @@ namespace dts {
 
 	template<typename T>
 	class PriorityQueue {
-		class Iterator {
+		class Node {
 			T value;
-			Iterator* next;
-			Iterator* prev;
+			Node* next;
+			Node* prev;
 		public:
 			int priority;
-			Iterator() {
+			Node() {
 				value = T();
 				next = nullptr;
 				prev = nullptr;
 				priority = 0;
 			}
-			Iterator(const T& _value, int _priority = 0, Iterator* _next = nullptr, Iterator* _prev = nullptr) {
+			Node(const T& _value, int _priority = 0, Node* _next = nullptr, Node* _prev = nullptr) {
 				value = _value;
 				next = _next;
 				prev = _prev;
@@ -419,87 +428,87 @@ namespace dts {
 			T& operator*() {
 				return value;
 			}
-			Iterator operator+(int index) {
-				Iterator* linkedElem = this;
+			Node operator+(int index) {
+				Node* linkedElem = this;
 				for (int i = 0; i < index && linkedElem->next != nullptr; i++) {
 					linkedElem = linkedElem->next;
 				}
 				return *linkedElem;
 			}
-			Iterator operator-(int index) {
-				Iterator* linkedElem = this;
+			Node operator-(int index) {
+				Node* linkedElem = this;
 				for (int i = 0; i < index && linkedElem->prev != nullptr; i++) {
 					linkedElem = linkedElem->prev;
 				}
 				return *linkedElem;
 			}
-			Iterator& operator+=(int index) {
+			Node& operator+=(int index) {
 				*this = *this + index;
 				return *this;
 			}
-			Iterator& operator-=(int index) {
+			Node& operator-=(int index) {
 				*this = *this - index;
 				return *this;
 			}
 
-			Iterator& operator++() {
+			Node& operator++() {
 				*this += 1;
 				return *this;
 			}
-			Iterator& operator--() {
+			Node& operator--() {
 				*this -= 1;
 				return *this;
 			}
-			Iterator operator++(int i) {
-				Iterator tmp = *this;
+			Node operator++(int i) {
+				Node tmp = *this;
 				*this += 1;
 				return tmp;
 			}
-			Iterator operator--(int i) {
-				Iterator tmp = *this;
+			Node operator--(int i) {
+				Node tmp = *this;
 				*this -= 1;
 				return tmp;
 			}
 
-			bool operator==(const Iterator& right) {
+			bool operator==(const Node& right) {
 				return value == right.value && next == right.next && prev == right.prev;
 			}
-			bool operator!=(const Iterator& right) {
+			bool operator!=(const Node& right) {
 				return !(*this == right);
 			}
-			bool operator<(const Iterator& right) {
-				Iterator* it = this;
+			bool operator<(const Node& right) {
+				Node* it = this;
 				while (it->next != nullptr) {
 					it = it->next;
 					if (*it == right) return true;
 				}
 				return false;
 			}
-			bool operator>(const Iterator& right) {
-				Iterator* it = this;
+			bool operator>(const Node& right) {
+				Node* it = this;
 				while (it->prev != nullptr) {
 					it = it->prev;
 					if (*it == right) return true;
 				}
 				return false;
 			}
-			bool operator<=(const Iterator& right) {
+			bool operator<=(const Node& right) {
 				return *this == right || *this < right;
 			}
-			bool operator>=(const Iterator& right) {
+			bool operator>=(const Node& right) {
 				return *this == right || *this > right;
 			}
 
 			friend class PriorityQueue;
 		};
 	protected:
-		Iterator* _first;
-		Iterator* _last;
+		Node* _first;
+		Node* _last;
 
 		int topPriority;
-		Iterator* _top;
+		Node* _top;
 
-		void adjustTop(Iterator* it, int priority);
+		void adjustTop(Node* it, int priority);
 	public:
 		PriorityQueue();
 		PriorityQueue(const initializer_list<T> il);
@@ -508,112 +517,10 @@ namespace dts {
 		void push(const T& elem, int priority);
 		T pop();
 		bool empty() const;
-		Iterator top();
-		T& last() {
-			return **_last;
-		}
+		Node top() const;
+		T& last();
 	};
-	template<typename T>
-	inline void PriorityQueue<T>::adjustTop(Iterator* it, int priority) {
-		if (it == nullptr) return;
-		if (priority > topPriority) {
-			topPriority = priority;
-			_top = it;
-		}
-	}
-	template<typename T>
-	inline PriorityQueue<T>::PriorityQueue() {
-		_first = nullptr;
-		_last = _first;
-		topPriority = 0;
-		_top = nullptr;
-	}
-	template<typename T>
-	inline PriorityQueue<T>::PriorityQueue(const initializer_list<T> il) {
-		for (auto i = il.begin(); i < il.end(); i++) {
-			push(*i, 0);
-		}
-	}
-	template<typename T>
-	inline PriorityQueue<T>::PriorityQueue(const PriorityQueue<T>& orig) {
-		_first = new Iterator(orig._first->value, orig._first->priority);
-		_last = _first;
-		for (auto i = orig._first + 1; i < orig._last; i++) {
-			_last->next = new Iterator(i.value, i.priority, _last);
-			_last = _last->next;
-		}
-	}
-	template<typename T>
-	inline void PriorityQueue<T>::push(const T& elem, int priority) {
-		if (_first == nullptr) {
-			_first = new Iterator(elem, priority);
-			_last = _first;
-			adjustTop(_first, priority);
-			return;
-		}
-		Iterator* it = _first;
-		while (it->next != nullptr && it->priority < priority) {
-			it = it->next;
-		}
-		if (priority > it->priority) {
-			Iterator* tmp = it->next;
-			it->next = new Iterator(elem, priority, tmp, it );
-			if (tmp != nullptr) tmp->prev = it->next;
-
-			
-			adjustTop(it->next, priority);
-		}
-		else {
-			Iterator* tmp = it->prev;
-			it->prev = new Iterator(elem, priority, it, tmp);
-			if (tmp != nullptr) tmp->next = it->prev;
-
-			adjustTop(it->prev, priority);
-		}
-		if (_last->next != nullptr)_last = _last->next;
-		if (_first->prev != nullptr) _first = _first->prev;
-	}
-	template<typename T>
-	inline bool PriorityQueue<T>::empty() const {
-		return _first == nullptr;
-	}
-	template<typename T>
-	inline T PriorityQueue<T>::pop() {
-		try {
-			if (_last == nullptr) throw runtime_error("Очередь с приоритетом пуста(dequeue).");
-
-			if(_first == _last){
-				T value = _first->value;
-				delete _first;
-				_first = nullptr;
-				_last = _first;
-				return value;
-			}
-
-			T value = _last->value;
-			_last = _last->prev;
-			delete _last->next;
-			_last->next = nullptr;
-			
-			_top = _last;
-			topPriority = _top->priority;
-
-			return value;
-		}
-		catch (runtime_error re) {
-			cout << re.what();
-		}
-	}
-	template<typename T>
-	inline typename PriorityQueue<T>::Iterator PriorityQueue<T>::top() {
-		try {
-			if (!empty()) return _top;
-			else throw runtime_error("Очередь с приоритетом пуста!");
-		}
-		catch (runtime_error re) {
-			cerr << re.what();
-		}
-	}
+	
 }
 
 namespace dts {
@@ -621,7 +528,7 @@ namespace dts {
 	template<typename T>
 	inline List<T> toDoubleList(const ForwardList<T>& ll) {
 		List<T> result;
-		typename ForwardList<T>::Iterator node = ll._first;
+		typename ForwardList<T>::Node node = ll._first;
 		while (node->next != nullptr) {
 			result.push_back(node->value);
 			node = node->next;
@@ -631,7 +538,7 @@ namespace dts {
 	template<typename T>
 	inline Vector<T> toArray(const ForwardList<T>& ll) {
 		Vector<T> result;
-		typename ForwardList<T>::Iterator node = ll._first;
+		typename ForwardList<T>::Node node = ll._first;
 		while (node->next != nullptr) {
 			result.push_back(node->value);
 			node = node->next;
@@ -641,17 +548,17 @@ namespace dts {
 	template<typename T>
 	inline void List<T>::pushFront(const T& elem) {
 		if (_first == nullptr) {
-			_first = new Iterator(elem);
+			_first = new Node(elem);
 			_last = _first;
 		}
-		_first->prev = new Iterator(elem);
+		_first->prev = new Node(elem);
 		_first = _first->prev;
 	}
 	template<typename T>
 	inline T& List<T>::getElemLast(int index) { // нахождение с конца
 		if (index < 0 || index >= _size) throw out_of_range("Неверный индекс связанного списка");
 
-		Iterator* linkedElem = _last;
+		Node* linkedElem = _last;
 		for (int current = _size - 1; current != index; current--) {
 			linkedElem = linkedElem->prev;
 		}
@@ -661,14 +568,14 @@ namespace dts {
 	inline T& List<T>::getElemFirst(int index) { // нахождение с начала
 		if (index < 0 || index >= _size) throw out_of_range("Неверный индекс связанного списка");
 
-		Iterator* linkedElem = _first;
+		Node* linkedElem = _first;
 		for (int current = 0; current != index; current++) {
 			linkedElem = linkedElem->next;
 		}
 		return linkedElem->value;
 	}
 	template<typename T>
-	inline void List<T>::bubbleSortCycleR(Iterator* linkedElem) { // Метод, проводящий один цикл пузырьковой сортировки(повторяется нужное количество раз уже в bubbleSort()
+	inline void List<T>::bubbleSortCycleR(Node* linkedElem) { // Метод, проводящий один цикл пузырьковой сортировки(повторяется нужное количество раз уже в bubbleSort()
 		if (linkedElem == nullptr) linkedElem = _first; // первый рассматриваемый элемент будет первым в списке
 
 		if (linkedElem->next != nullptr) { // Если есть следующий элемент, то...
@@ -691,7 +598,7 @@ namespace dts {
 	}
 	template<typename T>
 	inline void List<T>::bubbleSortI() {
-		Iterator linkedElem = _first;
+		Node linkedElem = _first;
 		for (int i = 0; i < _size; i++) {
 			if (linkedElem->value > linkedElem->next->value) {
 				swap(linkedElem->value, linkedElem->next->value);
@@ -702,7 +609,7 @@ namespace dts {
 	}
 	template<typename T>
 	inline T List<T>::popLast(int index) {
-		Iterator* linkedElem = _first;
+		Node* linkedElem = _first;
 		for (int curr = _size - 1; curr != index; curr--) {
 			linkedElem = linkedElem->prev;
 		}
@@ -716,7 +623,7 @@ namespace dts {
 	}
 	template<typename T>
 	inline T List<T>::popFirst(int index) {
-		Iterator* linkedElem = _first;
+		Node* linkedElem = _first;
 		for (int curr = 0; curr != index; curr++) {
 			linkedElem = linkedElem->next;
 		}
@@ -729,7 +636,7 @@ namespace dts {
 		return value;
 	}
 	template<typename T>
-	inline int List<T>::findLeftR(Iterator* linkedElem, const T& elem, int currIndex) {
+	inline int List<T>::findLeftR(Node* linkedElem, const T& elem, int currIndex) {
 		if (linkedElem->value == elem) {
 			return currIndex;
 		}
@@ -738,7 +645,7 @@ namespace dts {
 		}
 	}
 	template<typename T>
-	inline int List<T>::findRightR(Iterator* linkedElem, const T& elem, int currIndex, int lastFoundIndex) {
+	inline int List<T>::findRightR(Node* linkedElem, const T& elem, int currIndex, int lastFoundIndex) {
 		if (linkedElem == nullptr || linkedElem->next == nullptr) {
 			if (lastFoundIndex == 0) return -1;
 			return lastFoundIndex;
@@ -780,11 +687,11 @@ namespace dts {
 		}
 		else {
 
-			_first = new Iterator(orig._first->value);
-			Iterator* linkedElem = _first;
-			Iterator* origLinkedElem = orig._first;
+			_first = new Node(orig._first->value);
+			Node* linkedElem = _first;
+			Node* origLinkedElem = orig._first;
 			while (origLinkedElem->next != nullptr) {
-				linkedElem->next = new Iterator(origLinkedElem->next->value, nullptr, linkedElem);
+				linkedElem->next = new Node(origLinkedElem->next->value, nullptr, linkedElem);
 				linkedElem = linkedElem->next;
 				origLinkedElem = origLinkedElem->next;
 			}
@@ -807,13 +714,13 @@ namespace dts {
 	inline List<T>* List<T>::push_back(const T& elem) {
 
 		if (_last == nullptr) {
-			_last = new Iterator(elem);
+			_last = new Node(elem);
 			_first = _last;
 		}
 		else {
-			Iterator* oldLast = _last;
+			Node* oldLast = _last;
 
-			oldLast->next = new Iterator(elem, nullptr, oldLast);
+			oldLast->next = new Node(elem, nullptr, oldLast);
 			_last = oldLast->next;
 		}
 		_size++;
@@ -823,12 +730,12 @@ namespace dts {
 	template<typename T>
 	inline List<T>* List<T>::push_front(const T& elem) {
 		if (_first == nullptr) {
-			_first = new Iterator(elem);
+			_first = new Node(elem);
 			_last = _first;
 		}
 		else {
-			Iterator* oldFirst = _first;
-			_first = new Iterator(elem, oldFirst);
+			Node* oldFirst = _first;
+			_first = new Node(elem, oldFirst);
 			oldFirst->prev = _first;
 		}
 		_size++;
@@ -839,7 +746,7 @@ namespace dts {
 		if (_last == nullptr) throw runtime_error("Список пуст");
 
 		T value = _last->value;
-		Iterator* prev = _last->prev;
+		Node* prev = _last->prev;
 		if (prev == nullptr) {
 			delete _first;
 			_first = nullptr;
@@ -857,7 +764,7 @@ namespace dts {
 	inline T List<T>::pop_front() {
 		if (_first == nullptr) throw runtime_error("Список пуст");
 		T value = _first->value;
-		Iterator* next = _first->next;
+		Node* next = _first->next;
 		if (next == nullptr) {
 			_size--;
 			delete _first;
@@ -869,7 +776,9 @@ namespace dts {
 		next->prev = nullptr;
 		_first = next;
 		_size--;
+
 		if (_first == nullptr) _last = nullptr;
+		
 		return value;
 	}
 	template<typename T>
@@ -898,11 +807,11 @@ namespace dts {
 		cout << endl;
 	}
 	template<typename T>
-	inline typename List<T>::Iterator& List<T>::begin() {
+	inline typename List<T>::Node& List<T>::begin() {
 		return *_first;
 	}
 	template<typename T>
-	inline typename List<T>::Iterator& List<T>::end() {
+	inline typename List<T>::Node& List<T>::end() {
 		return *_last;
 	}
 	template<typename T>
@@ -926,7 +835,7 @@ namespace dts {
 	template<typename T>
 	inline ForwardList<T> toList(const List<T>& dll) {
 		ForwardList<T> result;
-		typename List<T>::Iterator node = dll._first;
+		typename List<T>::Node node = dll._first;
 		while (node->next != nullptr) {
 			result.push_back(node->value);
 			node = node->next;
@@ -937,7 +846,7 @@ namespace dts {
 	inline Vector<T> toArray(const List<T>& dll) {
 		Vector<T> result;
 		
-		typename List<T>::Iterator node = dll._first;
+		typename List<T>::Node node = dll._first;
 		while (node->next != nullptr) {
 			result.push_back(node->value);
 			node = node->next;
@@ -945,30 +854,30 @@ namespace dts {
 		return result;
 	}
 	template<typename T>
-	inline Deque<T>* Deque<T>::enqueueFirst(const T& elem) {
+	inline Deque<T>* Deque<T>::push_front(const T& elem) {
 		deque.push_front(elem);
 		return this;
 	}
 	template<typename T>
-	inline Deque<T>* Deque<T>::enqueueLast(const T& elem) {
+	inline Deque<T>* Deque<T>::push_back(const T& elem) {
 		deque.push_back(elem);
 		return this;
 	}
 	template<typename T>
-	inline T Deque<T>::dequeueFirst() {
+	inline T Deque<T>::pop_front() {
 		return deque.pop_front();
 
 	}
 	template<typename T>
-	inline T Deque<T>::dequeueLast() {
+	inline T Deque<T>::pop_back() {
 		return deque.pop_back();
 	}
 	template<typename T>
-	inline typename List<T>::Iterator Deque<T>::begin() {
+	inline typename List<T>::Node& Deque<T>::begin() {
 		return deque.begin();
 	}
 	template<typename T>
-	inline typename List<T>::Iterator Deque<T>::end() {
+	inline typename List<T>::Node& Deque<T>::end() {
 		return deque.end();
 	}
 	template<typename T>
@@ -1008,7 +917,7 @@ namespace dts {
 	}
 	template<typename T>
 	inline Queue<T>* Queue<T>::enqueue(const T& elem) {
-		queue.enqueueFirst(elem);
+		queue.push_front(elem);
 		return this;
 	}
 	template <typename T>
@@ -1026,7 +935,7 @@ namespace dts {
 		if (queue.count() == 0) {
 			throw "Стек пуст!";
 		}
-		return queue.dequeueLast();
+		return queue.pop_back();
 	}
 
 	template<typename T>
@@ -1415,5 +1324,110 @@ namespace dts {
 	template<typename T>
 	inline int ForwardList<T>::size() const {
 		return _size;
+	}
+
+	template<typename T>
+	inline void PriorityQueue<T>::adjustTop(Node* it, int priority) {
+		if (it == nullptr) return;
+		if (priority > topPriority) {
+			topPriority = priority;
+			_top = it;
+		}
+	}
+	template<typename T>
+	inline PriorityQueue<T>::PriorityQueue() {
+		_first = nullptr;
+		_last = _first;
+		topPriority = 0;
+		_top = nullptr;
+	}
+	template<typename T>
+	inline PriorityQueue<T>::PriorityQueue(const initializer_list<T> il) {
+		for (auto i = il.begin(); i < il.end(); i++) {
+			push(*i, 0);
+		}
+	}
+	template<typename T>
+	inline PriorityQueue<T>::PriorityQueue(const PriorityQueue<T>& orig) {
+		_first = new Node(orig._first->value, orig._first->priority);
+		_last = _first;
+		for (auto i = orig._first + 1; i < orig._last; i++) {
+			_last->next = new Node(i.value, i.priority, _last);
+			_last = _last->next;
+		}
+	}
+	template<typename T>
+	inline void PriorityQueue<T>::push(const T& elem, int priority) {
+		if (_first == nullptr) {
+			_first = new Node(elem, priority);
+			_last = _first;
+			adjustTop(_first, priority);
+			return;
+		}
+		Node* it = _first;
+		while (it->next != nullptr && it->priority < priority) {
+			it = it->next;
+		}
+		if (priority > it->priority) {
+			Node* tmp = it->next;
+			it->next = new Node(elem, priority, tmp, it);
+			if (tmp != nullptr) tmp->prev = it->next;
+
+			adjustTop(it->next, priority);
+		}
+		else {
+			Node* tmp = it->prev;
+			it->prev = new Node(elem, priority, it, tmp);
+			if (tmp != nullptr) tmp->next = it->prev;
+
+			adjustTop(it->prev, priority);
+		}
+		if (_last->next != nullptr)_last = _last->next;
+		if (_first->prev != nullptr) _first = _first->prev;
+	}
+	template<typename T>
+	inline bool PriorityQueue<T>::empty() const {
+		return _first == nullptr;
+	}
+	template<typename T>
+	inline T PriorityQueue<T>::pop() {
+		try {
+			if (_last == nullptr) throw runtime_error("Очередь с приоритетом пуста(dequeue).");
+
+			if (_first == _last) {
+				T value = _first->value;
+				delete _first;
+				_first = nullptr;
+				_last = _first;
+				return value;
+			}
+
+			T value = _last->value;
+			_last = _last->prev;
+			delete _last->next;
+			_last->next = nullptr;
+
+			_top = _last;
+			topPriority = _top->priority;
+
+			return value;
+		}
+		catch (runtime_error re) {
+			cout << re.what();
+		}
+	}
+	template<typename T>
+	inline typename PriorityQueue<T>::Node PriorityQueue<T>::top() const {
+		try {
+			if (!empty()) return _top;
+			else throw runtime_error("Очередь с приоритетом пуста!");
+		}
+		catch (runtime_error re) {
+			cerr << re.what();
+		}
+	}
+	template<typename T>
+	inline T& PriorityQueue<T>::last() {
+		return **_last;
 	}
 }

@@ -1,12 +1,28 @@
 ﻿#pragma once
 #include "dts.h"
 //#include <map> // для ассоциативного массива символов в toString()
-#include "map.h" // Переиграли и уничтожил
+#include "map.h" // Переиграл и уничтожил
+#include <cassert>
 namespace dts {
 	// Строка
 	class String
 	{
 	private:
+		friend ostream& operator<<(ostream& os, const String& s);
+		friend istream& operator>>(istream& is, String& s);
+		friend String operator+(const String& s1, const String& s2);
+		friend String operator+(const String& s, int n);
+
+		friend String& operator+=(String& s1, const String& s2);
+		friend String& operator+=(String& s, int n);
+
+		friend bool operator==(const String& s, const String& cs);
+		friend bool operator!=(const String& s, const String& cs);
+
+		friend bool operator<(const String& left, const String& right);
+		friend bool operator>(const String& left, const String& right);
+
+	protected:
 		char* cstr;
 		int _size;
 		int _capacity;
@@ -16,23 +32,15 @@ namespace dts {
 		const char* c_str();
 
 		operator string() const {
-			string result;
-			for (int i = 0; cstr[i] != '\0'; i++) {
-				result.push_back(cstr[i]);
-			}
-			return result;
+			return string(cstr);
 		}
 
-		
 
 		String();
 		explicit String(int size);
 		String(const String& s);
 		String(const char* cs);
-		String(const char c) : String() {
-			cstr[0] = c;
-			cstr[1] = '\0';
-		}
+		String(const char c);
 		~String();
 		String& operator=(const String& s) {
 			
@@ -56,27 +64,18 @@ namespace dts {
 		char& operator[](int index) {
 			return at(index);
 		}
-
-		friend ostream& operator<<(ostream& os, const String& s);
-		friend istream& operator>>(istream& is, String& s);
-		friend String operator+(const String& s1, const String& s2);
-		friend String operator+(const String& s, int n);
-
-		friend String& operator+=(const String& s1, const String& s2);
-		friend String& operator+=(const String& s, int n);
-
-		friend bool operator==(const String& s, const String& cs);
-		friend bool operator!=(const String& s, const String& cs);
-
-		friend bool operator<(const String& left, const String& right);
-		friend bool operator>(const String& left, const String& right);
+		char _at(int index) const {
+			assert(index >= 0 && index <= _size+1 && "Строка: неверно указан индекс(_at)");
+			
+			return cstr[index];
+		};
 		friend class StringBuilder;
 	};
 
 	inline String toString(int n) {
 		String result = "";
 		if (n == 0) result.append("0");
-		Map<int, char> digitChar = { { 0, '0' },{ 1, '1' },{ 2, '2' },{ 3, '3' },{ 4, '4' },{ 5, '5' },{ 6, '6' },{ 7, '7' },{ 8, '9' },{ 9, '9' } };
+		Map<int, char> digitChar = { { 0, '0' },{ 1, '1' },{ 2, '2' },{ 3, '3' },{ 4, '4' },{ 5, '5' },{ 6, '6' },{ 7, '7' },{ 8, '8' },{ 9, '9' } };
 
 		while (n > 0) {
 			result.append(digitChar[n % 10]);
@@ -123,15 +122,11 @@ namespace dts {
 
 	inline String& operator+=(String& s1, const String& s2)
 	{
-		String result = s1;
-		result.append(s2);
-		return s1 = result;
+		return s1.append(s2);
 	}
 	inline String& operator+=(String& s, int n)
 	{
-		String result = s;
-		result.append(toString(n));
-		return s = result;
+		return s.append(toString(n));
 	}
 
 	inline bool operator>(const String& left, const String& right) {
@@ -209,11 +204,16 @@ namespace dts {
 }
 
 inline void dts::String::adjustCapacity(int newCap) {
+	
+	if (_capacity == 0) _capacity = 1;
 	int oldCapacity = _capacity;
 	if (newCap <= _capacity / 2) {
-		while (newCap <= _capacity) _capacity /= 2;
+		while (true) {
+			if (_capacity / 2 >= newCap)_capacity /= 2;
+			else break;
+		}
 	}
-	else {
+	else if(newCap > _capacity){
 		while (newCap > _capacity) _capacity *= 2;
 	}
 	if (_capacity == oldCapacity) return;
@@ -263,6 +263,15 @@ inline dts::String::String(const char* cs) : String() {
 		strcpy(cstr, cs);
 		_size = strLen(cs);
 	}
+}
+
+inline dts::String::String(const char c) {
+	cstr = new char[2];
+
+	cstr[0] = c;
+	cstr[1] = '\0';
+	_size = 1;
+	_capacity = 2;
 }
 
 inline dts::String::~String() {

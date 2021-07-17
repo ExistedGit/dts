@@ -33,13 +33,13 @@ namespace dts {
 
 		V& addElemR(const T& key, const V& value, Node* node);
 
-		int getHeightR(Node* node = nullptr);
+		int getHeightR(Node* node = nullptr) const;
 
 		void Balance(Node*& node, const T& elem);
 		void BalanceR(Node*& node, const T& elem);
 
 		bool countR(const T& elem, Node* node = nullptr);
-		void inOrderPrint(Node* node);
+		void inOrderPrint(Node* node) const;
 
 		void rightRotate(Node*& node);
 
@@ -48,11 +48,12 @@ namespace dts {
 
 		void bigLeftRotate(Node*& node);
 
-		void printR(const std::string& prefix, const Node* node, bool isLeft, bool rightExists = false);
+		void printR(const std::string& prefix, const Node* node, bool isLeft, bool rightExists = false, bool keys = false) const;
 		V& findR(const T& key, Node* node);
 
 		Node* _root; 
-		Pair<T, V> lastFound;
+		Pair<T, V>* lastFound = nullptr;
+		unsigned long long _size = 0;
 
 		bool removeR(Node*& node, const T& key);
 		void clearR(Node*& node);
@@ -67,16 +68,16 @@ namespace dts {
 		V& push(const T& key, const V& value = V());
 		int getHeight();
 
-		bool count(const T& key);;
+		bool count(const T& key);
 
 
 		bool remove(const T& key);
 
 		// In Order
-		void printIO();
+		void printIO() const;
 
-		void print();
-
+		void printKeys() const;
+		void printValues() const;
 
 		V& find(const T& key);
 
@@ -85,6 +86,9 @@ namespace dts {
 			else return push(key);
 		}
 
+		int size() const {
+			return _size;
+		}
 
 	};
 };
@@ -107,6 +111,7 @@ namespace dts {
 		try {
 			if (_root == nullptr) {
 				_root = new Node(key, value);
+				_size++;
 				return _root->value;
 			}
 
@@ -120,6 +125,7 @@ namespace dts {
 				}
 				else {
 					node->right = new Node(key, value);
+					_size++;
 					return node->right->value;
 				}
 			}
@@ -131,6 +137,7 @@ namespace dts {
 				}
 				else {
 					node->left = new Node(key, value);
+					_size++;
 					return node->left->value;
 				}
 			}
@@ -141,7 +148,7 @@ namespace dts {
 		}
 	}
 	template<typename T, typename V>
-	inline int Map<T, V>::getHeightR(Node* node) {
+	inline int Map<T, V>::getHeightR(Node* node) const {
 		if (node == nullptr)
 			return 0;
 		else
@@ -206,28 +213,36 @@ namespace dts {
 	}
 	template<typename T, typename V>
 	inline bool Map<T, V>::countR(const T& key, Node* node) {
-		if (lastFound.key == key) return true;
+		if (lastFound != nullptr && lastFound->key == key) return true;
 
 		if (node == nullptr) return false;
 		if (node->key == key) return true;
 
 		if (key > node->key) {
 			if (node->right != nullptr) {
-				lastFound = Pair(node->right->key, node->right->value);
+				if(lastFound == nullptr )lastFound = new Pair<T, V>(node->right->key, node->right->value);
+				else {
+					lastFound->key = node->right->key;
+					lastFound->value = node->right->value;
+				}
 				return countR(key, node->right);
 			}
 			else return false;
 		}
 		else {
 			if (node->left != nullptr) {
-				lastFound = Pair(node->left->key, node->left->value);
+				if (lastFound == nullptr)lastFound = new Pair<T, V>(node->left->key, node->left->value);
+				else {
+					lastFound->key = node->left->key;
+					lastFound->value = node->left->value;
+				}
 				return countR(key, node->left);
 			}
 			else return false;
 		}
 	}
 	template<typename T, typename V>
-	inline void Map<T, V>::inOrderPrint(Node* node) {
+	inline void Map<T, V>::inOrderPrint(Node* node)  const {
 		if (node == nullptr) return;
 
 		inOrderPrint(node->left);
@@ -260,7 +275,6 @@ namespace dts {
 	template<typename T, typename V>
 	inline void Map<T, V>::bigRightRotate(Node*& node) {
 		rightRotate(node->right);
-
 		leftRotate(node);
 	}
 	template<typename T, typename V>
@@ -269,7 +283,7 @@ namespace dts {
 		rightRotate(node);
 	}
 	template<typename T, typename V>
-	inline void Map<T, V>::printR(const std::string& prefix, const Node* node, bool isLeft, bool rightExists)
+	inline void Map<T, V>::printR(const std::string& prefix, const Node* node, bool isLeft, bool rightExists, bool keys) const
 	{
 		if (node != nullptr)
 		{
@@ -278,11 +292,11 @@ namespace dts {
 			std::cout << (isLeft && rightExists ? (char)195 : (char)192) << (char)196 << (char)196;
 
 			// print the value of the node
-			std::cout << node->value << std::endl;
-
+			if (keys)std::cout << node->key << std::endl;
+			else std::cout << node->value << endl;
 			// enter the next tree level - left and right branch
-			printR(prefix + (isLeft && rightExists ? (char)179 : ' ') + "   ", node->left, true, node->right != nullptr);
-			printR(prefix + (rightExists ? (char)179 : ' ') + "   ", node->right, false);
+			printR(prefix + (isLeft && rightExists ? (char)179 : ' ') + "   ", node->left, true, node->right != nullptr, keys);
+			printR(prefix + (rightExists ? (char)179 : ' ') + "   ", node->right, false, false, keys);
 		}
 	}
 	template<typename T, typename V>
@@ -294,14 +308,23 @@ namespace dts {
 
 			if (key > node->key) {
 				if (node->right != nullptr) {
-					lastFound = Pair(node->right->key, node->right->value);
+					
+					if(lastFound == nullptr)lastFound = new Pair<T, V>(node->right->key, node->right->value);
+					else {
+						lastFound->key = node->right->key;
+						lastFound->value = node->right->value;
+					}
 					return findR(key, node->right);
 				}
 				else throw runtime_error("Бинарное дерево: findR не нашёл значение");
 			}
 			else {
 				if (node->left != nullptr) {
-					lastFound = Pair(node->left->key, node->left->value);
+					if (lastFound == nullptr)lastFound = new Pair<T, V>(node->left->key, node->left->value);
+					else {
+						lastFound->key = node->left->key;
+						lastFound->value = node->left->value;
+					}
 					return findR(key, node->left);
 				}
 				else throw runtime_error("Бинарное дерево: findR не нашёл значение");;
@@ -318,9 +341,8 @@ namespace dts {
 	}
 	template<typename T, typename V>
 	inline Map<T, V>::Map(const initializer_list<Pair<T, V>>& il) : Map() {
-		for (int i = 0; i < il.size(); i++) {
-			Pair<T, V> pair = *(il.begin() + i);
-			push(pair.key, pair.value);
+		for (auto i = il.begin(); i < il.end(); i++) {
+			push((*i).key, (*i).value);
 		}
 	}
 	template<typename T, typename V>
@@ -339,6 +361,7 @@ namespace dts {
 		}
 		delete node;
 		node = nullptr;
+		_size--;
 	}
 	template<typename T, typename V>
 	inline void Map<T, V>::clear() {
@@ -348,6 +371,7 @@ namespace dts {
 	}
 	template<typename T, typename V>
 	inline V& Map<T, V>::push(const T& key, const V& value) {
+		
 		return addElemR(key, value, _root);
 		
 	}
@@ -391,7 +415,7 @@ namespace dts {
 				delete node;
 				node = right;
 			}
-
+			_size--;
 			return true;
 		}
 
@@ -409,11 +433,11 @@ namespace dts {
 
 	// In Order
 	template<typename T, typename V>
-	inline void Map<T, V>::printIO() {
+	inline void Map<T, V>::printIO() const {
 		inOrderPrint(_root);
 	}
 	template<typename T, typename V>
-	inline void Map<T, V>::print()
+	inline void Map<T, V>::printValues() const
 	{
 		//system("cls");
 		printR("", _root, false);
@@ -421,10 +445,18 @@ namespace dts {
 	}
 
 	template<typename T, typename V>
+	inline void Map<T, V>::printKeys() const
+	{
+		//system("cls");
+		printR("", _root, false, false, true);
+		//system("pause");
+	}
+
+	template<typename T, typename V>
 	inline V& Map<T, V>::find(const T& key) {
 
 		
-		if (lastFound.key == key) return lastFound.value;
+		if (lastFound != nullptr && lastFound->key == key) return lastFound->value;
 		
 		return findR(key, _root);
 	}
